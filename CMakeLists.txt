@@ -42,8 +42,6 @@ if(CODESOC_BUILD_GAME)
     URL_HASH SHA256=2b3ee1e2120c7a0796b33062c7e9a694dd8a8caa56a96319ac8c8ecf54a90d0b
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
   FetchContent_MakeAvailable(raylib)
-  # Disable Raylib's F12 shortcut without changing its default frame swapping and input polling.
-  target_compile_definitions(raylib PRIVATE SUPPORT_SCREEN_CAPTURE=0)
   add_executable(codesoc-cubed src/main.cpp src/application.cpp src/renderer.cpp)
   target_link_libraries(codesoc-cubed PRIVATE codesoc_world raylib)
   target_include_directories(codesoc-cubed SYSTEM
