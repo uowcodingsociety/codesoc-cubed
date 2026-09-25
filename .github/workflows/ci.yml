@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install build and graphics dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake gcc-13 g++-13 ninja-build python3-venv \
+            clang-format-18 clang-tidy-18 \
+            libasound2-dev libx11-dev libxrandr-dev libxi-dev \
+            libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev
+
+      - name: Install CMake format tools
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install -r requirements-dev.txt
+
+      - name: Check formatting and CMake lint
+        run: |
+          git ls-files -z -- ':(glob)**/*.cpp' ':(glob)**/*.hpp' |
+            xargs -0 -r clang-format-18 --dry-run --Werror
+          git ls-files -z -- ':(glob)**/CMakeLists.txt' ':(glob)**/*.cmake' |
+            xargs -0 -r .venv/bin/cmake-format --check
+          git ls-files -z -- ':(glob)**/CMakeLists.txt' ':(glob)**/*.cmake' |
+            xargs -0 -r .venv/bin/cmake-lint
+
+      - name: Configure
+        run: |
+          /usr/bin/cmake -S . -B build -G Ninja \
+            -DCMAKE_C_COMPILER=gcc-13 \
+            -DCMAKE_CXX_COMPILER=g++-13 \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DCODESOC_BUILD_GAME=ON \
+            -DCODESOC_CI_STRICT=ON
+
+      - name: Build and run tests
+        run: |
+          /usr/bin/cmake --build build --parallel 2
+          /usr/bin/ctest --test-dir build --output-on-failure
+
+      - name: Check C++ with clang-tidy
+        run: |
+          clang-tidy-18 -p build \
+            --warnings-as-errors='*' \
+            --header-filter="^${GITHUB_WORKSPACE}/(src|tests)/" \
+            src/*.cpp tests/*.cpp
