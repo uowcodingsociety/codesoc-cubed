@@ -1,0 +1,36 @@
+Language: Cpp
+BasedOnStyle: LLVM
+
+# K&R braces.
+BreakBeforeBraces: Attach
+
+# Four spaces, including wrapped lines. Never emit tabs.
+IndentWidth: 4
+ContinuationIndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+# Align labels and access specifiers with their enclosing switch/class.
+IndentCaseLabels: false
+AccessModifierOffset: -4
+
+# Type* pointer and Type& reference.
+DerivePointerAlignment: false
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+ColumnLimit: 100
+
+# Put angle-bracket includes before quoted project includes.
+# Disable clang-format's special "main header first" category so this order
+# also applies to a source file and its matching header.
+SortIncludes: CaseSensitive
+IncludeBlocks: Regroup
+IncludeIsMainRegex: 'a^'
+IncludeCategories:
+  - Regex: '^<[^>]+>$'
+    Priority: 1
+  - Regex: '^"[^"]+"$'
+    Priority: 2
+  - Regex: '.*'
+    Priority: 3
