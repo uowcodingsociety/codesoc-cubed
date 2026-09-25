@@ -31,10 +31,13 @@ jobs:
           python3 -m venv .venv
           .venv/bin/pip install -r requirements-dev.txt
 
-      - name: Check formatting and CMake lint
+      - name: Check C++ formatting
         run: |
           git ls-files -z -- ':(glob)**/*.cpp' ':(glob)**/*.hpp' |
             xargs -0 -r clang-format-18 --dry-run --Werror
+
+      - name: Check CMake formatting and lint
+        run: |
           git ls-files -z -- ':(glob)**/CMakeLists.txt' ':(glob)**/*.cmake' |
             xargs -0 -r .venv/bin/cmake-format --check
           git ls-files -z -- ':(glob)**/CMakeLists.txt' ':(glob)**/*.cmake' |

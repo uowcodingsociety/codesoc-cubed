@@ -4,4 +4,6 @@
 
 #include "application.hpp"
 
-int main(int argc, char** argv) { return codesoc::runApplication(argc, argv); }
+int main(int argc, char** argv) {
+    return codesoc::runApplication(argc, argv);
+}

@@ -65,6 +65,16 @@ Edited chunks remain in memory for the current run and are never written to disk
 - `tests/world_tests.cpp` checks the graphics-independent world behaviour
 - [LAB.md](LAB.md) contains the Welcome Week activity
 
+## C++ Style
+
+CI uses clang-format 18 and clang-tidy 18.
+Keep lines within 100 columns and run `clang-format-18 -i src/*.cpp src/*.hpp tests/*.cpp` after editing C++ files.
+When a call, initializer or function declaration wraps, put each argument, element or parameter on its own line as closely as clang-format allows.
+Long conditions should keep each top-level `&&` or `||` test visually distinct; clang-format 18 approximates this rather than enforcing every case.
+Use braces for every `if`, `else`, `for`, `while` and `do` body, including single-statement bodies.
+Write function definitions on multiple lines and leave one blank line between logical blocks of work.
+The logical-block spacing is a review guideline; the other mechanical rules live in `.clang-format` and `.clang-tidy`.
+
 ## Verification
 
 Install the CMake formatter and linter with `python3 -m pip install -r requirements-dev.txt`.
@@ -75,8 +85,8 @@ Run `cmake-format --in-place path/to/CMakeLists.txt` to apply formatting to a fi
 ```sh
 ctest --test-dir build --output-on-failure
 ./build/codesoc-cubed --seed 42 --smoke-test
-clang-format --dry-run --Werror src/*.cpp src/*.hpp tests/*.cpp
-clang-tidy -p build --warnings-as-errors='*' src/*.cpp tests/*.cpp
+clang-format-18 --dry-run --Werror src/*.cpp src/*.hpp tests/*.cpp
+clang-tidy-18 -p build --warnings-as-errors='*' src/*.cpp tests/*.cpp
 git ls-files -z --cached --others --exclude-standard -- ':(glob)**/CMakeLists.txt' ':(glob)**/*.cmake' |
   xargs -0 cmake-format --check
 git ls-files -z --cached --others --exclude-standard -- ':(glob)**/CMakeLists.txt' ':(glob)**/*.cmake' |

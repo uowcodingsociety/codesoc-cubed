@@ -13,10 +13,12 @@ namespace {
 
 constexpr std::array<Cell, 6> normals{
     {{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}}};
-constexpr float corners[6][4][3] = {
-    {{1, 0, 1}, {1, 0, 0}, {1, 1, 0}, {1, 1, 1}}, {{0, 0, 0}, {0, 0, 1}, {0, 1, 1}, {0, 1, 0}},
-    {{0, 1, 1}, {1, 1, 1}, {1, 1, 0}, {0, 1, 0}}, {{0, 0, 0}, {1, 0, 0}, {1, 0, 1}, {0, 0, 1}},
-    {{0, 0, 1}, {1, 0, 1}, {1, 1, 1}, {0, 1, 1}}, {{1, 0, 0}, {0, 0, 0}, {0, 1, 0}, {1, 1, 0}}};
+constexpr float corners[6][4][3] = {{{1, 0, 1}, {1, 0, 0}, {1, 1, 0}, {1, 1, 1}},
+                                    {{0, 0, 0}, {0, 0, 1}, {0, 1, 1}, {0, 1, 0}},
+                                    {{0, 1, 1}, {1, 1, 1}, {1, 1, 0}, {0, 1, 0}},
+                                    {{0, 0, 0}, {1, 0, 0}, {1, 0, 1}, {0, 0, 1}},
+                                    {{0, 0, 1}, {1, 0, 1}, {1, 1, 1}, {0, 1, 1}},
+                                    {{1, 0, 0}, {0, 0, 0}, {0, 1, 0}, {1, 1, 0}}};
 constexpr std::array<float, 6> faceLight{0.78f, 0.68f, 1.0f, 0.55f, 0.88f, 0.75f};
 
 constexpr const char* vertexShader = R"(
@@ -47,7 +49,8 @@ void main() {
 Color shade(Color base, float light) {
     return {std::uint8_t(std::clamp(base.r * light, 0.0f, 255.0f)),
             std::uint8_t(std::clamp(base.g * light, 0.0f, 255.0f)),
-            std::uint8_t(std::clamp(base.b * light, 0.0f, 255.0f)), base.a};
+            std::uint8_t(std::clamp(base.b * light, 0.0f, 255.0f)),
+            base.a};
 }
 
 struct Builder {
@@ -91,20 +94,24 @@ void appendFace(Builder& builder, Block block, int x, int y, int z, int face) {
 
 Mesh buildChunk(const World& world, ChunkCoord coord) {
     Builder builder;
-    for (int y = 0; y < height; ++y)
-        for (int localZ = 0; localZ < chunkSize; ++localZ)
+    for (int y = 0; y < height; ++y) {
+        for (int localZ = 0; localZ < chunkSize; ++localZ) {
             for (int localX = 0; localX < chunkSize; ++localX) {
                 int x = coord.x * chunkSize + localX;
                 int z = coord.z * chunkSize + localZ;
                 Block block = world.get(x, y, z);
-                if (block == Block::Air)
+                if (block == Block::Air) {
                     continue;
+                }
                 for (int face = 0; face < int(normals.size()); ++face) {
                     Cell normal = normals[std::size_t(face)];
-                    if (!solid(world.get(x + normal.x, y + normal.y, z + normal.z)))
+                    if (!solid(world.get(x + normal.x, y + normal.y, z + normal.z))) {
                         appendFace(builder, block, x, y, z, face);
+                    }
                 }
             }
+        }
+    }
     return builder.vertices.empty() ? Mesh{} : builder.upload();
 }
 
@@ -134,8 +141,9 @@ Renderer::Renderer() {
 Renderer::~Renderer() {
     for (auto& [coord, mesh] : meshes_) {
         static_cast<void>(coord);
-        if (mesh.vertexCount > 0)
+        if (mesh.vertexCount > 0) {
             UnloadMesh(mesh);
+        }
     }
     UnloadMaterial(material_);
 }
@@ -146,15 +154,18 @@ void Renderer::rebuild(World& world, Vec3 playerPosition, int maximumChunks) {
             ++it;
             continue;
         }
-        if (it->second.vertexCount > 0)
+        if (it->second.vertexCount > 0) {
             UnloadMesh(it->second);
+        }
         it = meshes_.erase(it);
     }
 
     std::vector<ChunkCoord> pending;
-    for (ChunkCoord coord : world.activeChunks())
-        if (!meshes_.contains(coord) || world.isDirty(coord))
+    for (ChunkCoord coord : world.activeChunks()) {
+        if (!meshes_.contains(coord) || world.isDirty(coord)) {
             pending.push_back(coord);
+        }
+    }
     std::sort(pending.begin(), pending.end(), [&](ChunkCoord a, ChunkCoord b) {
         auto squaredDistance = [&](ChunkCoord coord) {
             float dx = float(coord.x * chunkSize + chunkSize / 2) - playerPosition.x;
@@ -167,8 +178,9 @@ void Renderer::rebuild(World& world, Vec3 playerPosition, int maximumChunks) {
     for (int i = 0; i < std::min(maximumChunks, int(pending.size())); ++i) {
         ChunkCoord coord = pending[std::size_t(i)];
         auto old = meshes_.find(coord);
-        if (old != meshes_.end() && old->second.vertexCount > 0)
+        if (old != meshes_.end() && old->second.vertexCount > 0) {
             UnloadMesh(old->second);
+        }
         meshes_[coord] = buildChunk(world, coord);
         world.clearDirty(coord);
     }
@@ -180,7 +192,9 @@ void Renderer::rebuild(World& world, Vec3 playerPosition, int maximumChunks) {
     }
 }
 
-Color Renderer::sky() { return {153, 196, 219, 255}; }
+Color Renderer::sky() {
+    return {153, 196, 219, 255};
+}
 
 void Renderer::draw(Camera3D camera) const {
     Color color = sky();
@@ -191,15 +205,17 @@ void Renderer::draw(Camera3D camera) const {
     Matrix identity = MatrixIdentity();
     for (const auto& [coord, mesh] : meshes_) {
         static_cast<void>(coord);
-        if (mesh.vertexCount > 0)
+        if (mesh.vertexCount > 0) {
             DrawMesh(mesh, material_, identity);
+        }
     }
     EndMode3D();
 }
 
 void Renderer::icon(Block block, float x, float y, float size) const {
-    if (block == Block::Air)
+    if (block == Block::Air) {
         return;
+    }
     Color base = blockColor(block);
     Vector2 top{x, y};
     Vector2 left{x - size * 0.5f, y + size * 0.25f};

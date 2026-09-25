@@ -15,8 +15,9 @@ constexpr std::uint32_t testSeed = 42;
 constexpr float step = 1.0f / 120.0f;
 
 void check(bool condition, const char* message) {
-    if (!condition)
+    if (!condition) {
         throw std::runtime_error(message);
+    }
 }
 
 void testGeneration() {
@@ -26,7 +27,7 @@ void testGeneration() {
     second.streamAround({-120.0f, 40.0f, 80.0f}, 81);
     first.streamAround({80.0f, 40.0f, -120.0f}, 81);
     int seedDifferences = 0;
-    for (int z = -130; z <= 130; z += 13)
+    for (int z = -130; z <= 130; z += 13) {
         for (int x = -130; x <= 130; x += 13) {
             int surface = first.surfaceHeight(x, z);
             check(surface >= 20 && surface <= 32, "Gentle hills must stay within the chosen range");
@@ -43,6 +44,7 @@ void testGeneration() {
                   "Chunk loading order must not change generation");
             seedDifferences += surface != different.surfaceHeight(x, z);
         }
+    }
     check(seedDifferences > 0, "Different seeds must change the terrain");
     for (std::uint32_t seed : {0u, 1u, std::numeric_limits<std::uint32_t>::max()}) {
         World world(seed);
@@ -88,8 +90,9 @@ void testPhysicsAndTargeting() {
     World world(testSeed);
     Player player;
     player.feet = world.spawn();
-    for (int i = 0; i < 120; ++i)
+    for (int i = 0; i < 120; ++i) {
         world.move(player, {}, step);
+    }
     check(player.grounded, "Player must settle on the terrain");
     float ground = player.feet.y;
     world.move(player, {0, 0, 0, true, false}, step);
@@ -124,12 +127,14 @@ void testPhysicsAndTargeting() {
     check(traveller.feet.x < -128.0f, "Flight must cross the old negative world edge");
 
     int surface = world.surfaceHeight(0, 0);
-    for (int y = 0; y <= surface; ++y)
+    for (int y = 0; y <= surface; ++y) {
         world.set(0, y, 0, Block::Air);
+    }
     Player falling;
     falling.feet = {0.5f, float(surface) + 1.01f, 0.5f};
-    for (int i = 0; i < 500; ++i)
+    for (int i = 0; i < 500; ++i) {
         world.move(falling, {}, step);
+    }
     check(falling.feet.y < -1.0f, "Player must be able to fall into the void");
     float bottom = falling.feet.y;
     falling.flying = true;

@@ -54,14 +54,17 @@ float smoothValueNoise(float x, float z, std::uint32_t seed) {
         constexpr std::uint32_t valueMask = 65535;
         return float(coordinateHash(a, b, seed) & valueMask) / float(valueMask);
     };
+
     return std::lerp(std::lerp(value(ix, iz), value(ix + 1, iz), u),
-                     std::lerp(value(ix, iz + 1), value(ix + 1, iz + 1), u), v);
+                     std::lerp(value(ix, iz + 1), value(ix + 1, iz + 1), u),
+                     v);
 }
 
 int floorDiv(int value, int divisor) {
     int quotient = value / divisor;
-    if (value < 0 && value % divisor != 0)
+    if (value < 0 && value % divisor != 0) {
         --quotient;
+    }
     return quotient;
 }
 
@@ -81,15 +84,21 @@ const char* blockName(Block block) {
     return value < names.size() ? names[value] : "Unknown";
 }
 
-bool solid(Block block) { return block != Block::Air; }
+bool solid(Block block) {
+    return block != Block::Air;
+}
 
-Vec3 Player::eye() const { return {feet.x, feet.y + playerEyeHeight, feet.z}; }
+Vec3 Player::eye() const {
+    return {feet.x, feet.y + playerEyeHeight, feet.z};
+}
 
 Vec3 Player::direction() const {
     return {std::sin(yaw) * std::cos(pitch), std::sin(pitch), std::cos(yaw) * std::cos(pitch)};
 }
 
-World::World(std::uint32_t seed) { generate(seed); }
+World::World(std::uint32_t seed) {
+    generate(seed);
+}
 
 void World::generate(std::uint32_t seed) {
     seed_ = seed;
@@ -102,7 +111,9 @@ ChunkCoord World::chunkFor(int x, int z) {
     return {floorDiv(x, chunkSize), floorDiv(z, chunkSize)};
 }
 
-bool World::contains(int y) { return y >= 0 && y < height; }
+bool World::contains(int y) {
+    return y >= 0 && y < height;
+}
 
 std::size_t World::index(int localX, int y, int localZ) {
     return std::size_t(localX + chunkSize * (localZ + chunkSize * y));
@@ -111,11 +122,13 @@ std::size_t World::index(int localX, int y, int localZ) {
 int World::surfaceHeight(int x, int z) const {
     float broad =
         smoothValueNoise(float(x) / broadTerrainScale, float(z) / broadTerrainScale, seed_);
-    float detail = smoothValueNoise(float(x) / detailTerrainScale, float(z) / detailTerrainScale,
+    float detail = smoothValueNoise(float(x) / detailTerrainScale,
+                                    float(z) / detailTerrainScale,
                                     seed_ + detailSeedOffset);
     return std::clamp(baseTerrainHeight + int(std::round(broad * broadTerrainHeight +
                                                          detail * detailTerrainHeight)),
-                      1, height - 2);
+                      1,
+                      height - 2);
 }
 
 Block World::surfaceBlock(int x, int z) const {
@@ -125,10 +138,12 @@ Block World::surfaceBlock(int x, int z) const {
 }
 
 Block World::columnBlock(int x, int y, int z, int surface) const {
-    if (y > surface)
+    if (y > surface) {
         return Block::Air;
-    if (y == surface)
+    }
+    if (y == surface) {
         return surfaceBlock(x, z);
+    }
     return y >= surface - dirtDepth ? Block::Dirt : Block::Stone;
 }
 
@@ -138,27 +153,33 @@ Block World::generatedBlock(int x, int y, int z) const {
 
 World::ChunkData& World::ensureChunk(ChunkCoord coord) {
     auto [entry, inserted] = chunks_.try_emplace(coord);
-    if (!inserted)
+    if (!inserted) {
         return entry->second;
-    for (int localZ = 0; localZ < chunkSize; ++localZ)
+    }
+
+    for (int localZ = 0; localZ < chunkSize; ++localZ) {
         for (int localX = 0; localX < chunkSize; ++localX) {
             int x = coord.x * chunkSize + localX;
             int z = coord.z * chunkSize + localZ;
             int surface = surfaceHeight(x, z);
-            for (int y = 0; y < height; ++y)
+            for (int y = 0; y < height; ++y) {
                 entry->second.blocks[index(localX, y, localZ)] = columnBlock(x, y, z, surface);
+            }
         }
+    }
+
     dirty_.insert(coord);
     return entry->second;
 }
 
 void World::preloadSpawn() {
-    for (int z = -1; z <= 1; ++z)
+    for (int z = -1; z <= 1; ++z) {
         for (int x = -1; x <= 1; ++x) {
             ChunkCoord coord{x, z};
             ensureChunk(coord);
             active_.insert(coord);
         }
+    }
 }
 
 void World::streamAround(Vec3 position, int maximumNewChunks) {
@@ -169,53 +190,65 @@ void World::streamAround(Vec3 position, int maximumNewChunks) {
             continue;
         }
         auto chunk = chunks_.find(*it);
-        if (chunk != chunks_.end() && !chunk->second.modified)
+        if (chunk != chunks_.end() && !chunk->second.modified) {
             chunks_.erase(chunk);
+        }
         dirty_.erase(*it);
         it = active_.erase(it);
     }
 
     std::vector<ChunkCoord> missing;
-    for (int z = -loadRadius; z <= loadRadius; ++z)
+    for (int z = -loadRadius; z <= loadRadius; ++z) {
         for (int x = -loadRadius; x <= loadRadius; ++x) {
             ChunkCoord coord{centre.x + x, centre.z + z};
-            if (!active_.contains(coord))
+            if (!active_.contains(coord)) {
                 missing.push_back(coord);
+            }
         }
+    }
+
     std::sort(missing.begin(), missing.end(), [&](ChunkCoord a, ChunkCoord b) {
         int first = distance(a, centre);
         int second = distance(b, centre);
-        if (first != second)
+        if (first != second) {
             return first < second;
+        }
         return a.z != b.z ? a.z < b.z : a.x < b.x;
     });
 
     int generated = 0;
     for (ChunkCoord coord : missing) {
         bool alreadyRetained = chunks_.contains(coord);
-        if (!alreadyRetained && generated >= maximumNewChunks)
+        if (!alreadyRetained && generated >= maximumNewChunks) {
             continue;
+        }
         ensureChunk(coord);
         active_.insert(coord);
         dirty_.insert(coord);
-        if (!alreadyRetained)
+        if (!alreadyRetained) {
             ++generated;
+        }
     }
 }
 
 Block World::get(int x, int y, int z) const {
-    if (!contains(y))
+    if (!contains(y)) {
         return Block::Air;
+    }
     ChunkCoord coord = chunkFor(x, z);
     auto chunk = chunks_.find(coord);
-    if (chunk == chunks_.end())
+    if (chunk == chunks_.end()) {
         return generatedBlock(x, y, z);
+    }
+
     return chunk->second.blocks[index(x - coord.x * chunkSize, y, z - coord.z * chunkSize)];
 }
 
 bool World::set(int x, int y, int z, Block block) {
-    if (!contains(y) || block >= Block::Count || get(x, y, z) == block)
+    if (!contains(y) || block >= Block::Count || get(x, y, z) == block) {
         return false;
+    }
+
     ChunkCoord coord = chunkFor(x, z);
     auto& chunk = ensureChunk(coord);
     chunk.blocks[index(x - coord.x * chunkSize, y, z - coord.z * chunkSize)] = block;
@@ -229,19 +262,27 @@ void World::markAffectedChunksDirty(int x, int z) {
     dirty_.insert(coord);
     int localX = x - coord.x * chunkSize;
     int localZ = z - coord.z * chunkSize;
-    if (localX == 0)
+    if (localX == 0) {
         dirty_.insert({coord.x - 1, coord.z});
-    if (localX == chunkSize - 1)
+    }
+    if (localX == chunkSize - 1) {
         dirty_.insert({coord.x + 1, coord.z});
-    if (localZ == 0)
+    }
+    if (localZ == 0) {
         dirty_.insert({coord.x, coord.z - 1});
-    if (localZ == chunkSize - 1)
+    }
+    if (localZ == chunkSize - 1) {
         dirty_.insert({coord.x, coord.z + 1});
+    }
 }
 
-bool World::isDirty(ChunkCoord coord) const { return dirty_.contains(coord); }
+bool World::isDirty(ChunkCoord coord) const {
+    return dirty_.contains(coord);
+}
 
-void World::clearDirty(ChunkCoord coord) { dirty_.erase(coord); }
+void World::clearDirty(ChunkCoord coord) {
+    dirty_.erase(coord);
+}
 
 bool World::overlapsPlayer(Cell cell, Vec3 feet) const {
     return feet.x + playerRadius > cell.x && feet.x - playerRadius < cell.x + 1 &&
@@ -250,23 +291,31 @@ bool World::overlapsPlayer(Cell cell, Vec3 feet) const {
 }
 
 bool World::collides(Vec3 feet) const {
-    if (feet.y + playerHeight < 0 || feet.y > height)
+    if (feet.y + playerHeight < 0 || feet.y > height) {
         return false;
+    }
     int bottom = int(std::floor(feet.y + collisionEpsilon));
     int top = int(std::floor(feet.y + playerHeight - collisionEpsilon));
     int north = int(std::floor(feet.z - playerRadius + collisionEpsilon));
     int south = int(std::floor(feet.z + playerRadius - collisionEpsilon));
     int west = int(std::floor(feet.x - playerRadius + collisionEpsilon));
     int east = int(std::floor(feet.x + playerRadius - collisionEpsilon));
-    for (int y = bottom; y <= top; ++y)
-        for (int z = north; z <= south; ++z)
-            for (int x = west; x <= east; ++x)
-                if (solid(get(x, y, z)))
+
+    for (int y = bottom; y <= top; ++y) {
+        for (int z = north; z <= south; ++z) {
+            for (int x = west; x <= east; ++x) {
+                if (solid(get(x, y, z))) {
                     return true;
+                }
+            }
+        }
+    }
     return false;
 }
 
-Vec3 World::spawn() const { return {0.5f, float(surfaceHeight(0, 0)) + 1.01f, 0.5f}; }
+Vec3 World::spawn() const {
+    return {0.5f, float(surfaceHeight(0, 0)) + 1.01f, 0.5f};
+}
 
 void World::move(Player& player, Input input, float dt) const {
     dt = std::clamp(dt, 0.0f, maximumFrameTime);
@@ -275,26 +324,31 @@ void World::move(Player& player, Input input, float dt) const {
         input.forward /= length;
         input.right /= length;
     }
+
     float speed = player.flying ? (input.sprint ? fastFlyingSpeed : flyingSpeed)
                                 : (input.sprint ? sprintingSpeed : walkingSpeed);
     Vec3 velocity{
-        (std::sin(player.yaw) * input.forward - std::cos(player.yaw) * input.right) * speed, 0,
+        (std::sin(player.yaw) * input.forward - std::cos(player.yaw) * input.right) * speed,
+        0,
         (std::cos(player.yaw) * input.forward + std::sin(player.yaw) * input.right) * speed};
     if (player.flying) {
         player.verticalVelocity = 0;
         velocity.y = input.vertical * speed;
     } else {
-        if (input.jump && player.grounded)
+        if (input.jump && player.grounded) {
             player.verticalVelocity = jumpSpeed;
+        }
         player.verticalVelocity =
             std::max(player.verticalVelocity - gravity * dt, terminalVelocity);
         velocity.y = player.verticalVelocity;
     }
+
     int steps = std::max(
         1,
         int(std::ceil(std::max({std::abs(velocity.x), std::abs(velocity.y), std::abs(velocity.z)}) *
                       dt / maximumMovementStep)));
     player.grounded = false;
+
     for (int step = 0; step < steps; ++step) {
         float timeSlice = dt / float(steps);
         moveAlongAxis(player, {velocity.x * timeSlice, 0, 0});
@@ -310,20 +364,24 @@ void World::moveAlongAxis(Player& player, Vec3 displacement) const {
         position.z += amount.z * fraction;
         return position;
     };
+
     Vec3 target = displaced(player.feet, displacement);
     if (!collides(target)) {
         player.feet = target;
         return;
     }
+
     float clearFraction = 0;
     float blockedFraction = 1;
     for (int i = 0; i < collisionSearchIterations; ++i) {
         float candidateFraction = (clearFraction + blockedFraction) * 0.5f;
-        if (collides(displaced(player.feet, displacement, candidateFraction)))
+        if (collides(displaced(player.feet, displacement, candidateFraction))) {
             blockedFraction = candidateFraction;
-        else
+        } else {
             clearFraction = candidateFraction;
+        }
     }
+
     player.feet = displaced(player.feet, displacement, clearFraction);
     if (displacement.y != 0) {
         player.grounded = displacement.y < 0;
@@ -332,15 +390,20 @@ void World::moveAlongAxis(Player& player, Vec3 displacement) const {
 }
 
 std::optional<Hit> World::raycast(Vec3 origin, Vec3 direction, float reach) const {
-    if (origin.y < -reach || origin.y > height + reach)
+    if (origin.y < -reach || origin.y > height + reach) {
         return {};
+    }
+
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y +
                              direction.z * direction.z);
-    if (length < directionEpsilon || !std::isfinite(length))
+    if (length < directionEpsilon || !std::isfinite(length)) {
         return {};
+    }
+
     direction.x /= length;
     direction.y /= length;
     direction.z /= length;
+
     Cell cell{int(std::floor(origin.x)), int(std::floor(origin.y)), int(std::floor(origin.z))};
     Cell previous = cell;
     auto step = [](float value) { return value > 0 ? 1 : value < 0 ? -1 : 0; };
@@ -364,8 +427,9 @@ std::optional<Hit> World::raycast(Vec3 origin, Vec3 direction, float reach) cons
     float travelled = 0;
     while (travelled <= reach) {
         Block block = get(cell.x, cell.y, cell.z);
-        if (solid(block))
+        if (solid(block)) {
             return Hit{cell, previous, block, travelled};
+        }
         previous = cell;
         if (nextX <= nextY && nextX <= nextZ) {
             cell.x += stepX;
