@@ -25,7 +25,8 @@ Only the current project branding should appear in tracked project text and code
 - `--smoke-test` is a developer-only, hidden-window check that runs for 60 frames and exits
 
 World changes exist only for the current process.
-The game does not save or load worlds, and it does not expose a screenshot action, including Raylib's default F12 shortcut.
+The game does not save or load worlds.
+Raylib's built-in F12 shortcut saves a screenshot of the game window.
 
 ## World Model
 
@@ -77,6 +78,7 @@ There is no automatic respawn if the player falls into the void, though flight c
 | F3 | Toggle position, seed, chunk, loaded-chunk, FPS and triangle information |
 | H | Toggle the controls card |
 | F11 | Toggle borderless fullscreen |
+| F12 | Save a screenshot using Raylib's built-in shortcut |
 | Escape or Q | Quit |
 
 Mining and placement use a seven-block targeting reach.

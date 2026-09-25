@@ -7,7 +7,7 @@ The terrain extends horizontally as the player travels, and changes last only un
 ## Build and Run
 
 You need a C++20 compiler, CMake 3.25 or newer and OpenGL 3.3 support.
-CMake downloads the official Raylib 6.0 release during configuration and builds it without the default F12 screenshot shortcut.
+CMake downloads the official Raylib 6.0 release during configuration with its default F12 screenshot shortcut enabled.
 The prepared Linux lab machines have the required toolchain installed.
 
 ```sh
@@ -44,11 +44,13 @@ Linux is the first tested platform for the lab.
 | F3 | Toggle position, seed, chunk and frame information |
 | H | Toggle the controls card |
 | F11 | Toggle borderless fullscreen |
+| F12 | Save a screenshot |
 | Escape or Q | Quit immediately |
 
 The first three hotbar slots contain grass, dirt and stone.
 The remaining six slots are empty and cannot place blocks.
 There is no automatic rescue after falling into the void, although double Space can start flight during a fall.
+Raylib saves F12 screenshots in the working directory as `screenshot000.png`, `screenshot001.png` and so on.
 
 ## World and Code
 
