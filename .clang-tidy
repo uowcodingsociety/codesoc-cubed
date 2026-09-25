@@ -1,6 +1,7 @@
 ---
-Checks: '-*,readability-identifier-naming'
+Checks: '-*,readability-braces-around-statements,readability-identifier-naming'
 CheckOptions:
+  readability-braces-around-statements.ShortStatementLines: '0'
   readability-identifier-naming.VariableCase: camelBack
   readability-identifier-naming.ConstantCase: camelBack
   readability-identifier-naming.ParameterCase: camelBack

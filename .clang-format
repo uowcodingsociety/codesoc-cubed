@@ -21,6 +21,18 @@ ReferenceAlignment: Left
 
 ColumnLimit: 100
 
+# Keep wrapped calls, initializers and declarations to one item per line.
+BinPackArguments: false
+BinPackParameters: false
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+
+# Make even small definitions and unbraced control statements explicit.
+AllowShortFunctionsOnASingleLine: None
+InsertBraces: true
+SeparateDefinitionBlocks: Always
+MaxEmptyLinesToKeep: 1
+
 # Put angle-bracket includes before quoted project includes.
 # Disable clang-format's special "main header first" category so this order
 # also applies to a source file and its matching header.

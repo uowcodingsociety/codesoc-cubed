@@ -55,8 +55,9 @@ void printHelp() {
 std::uint32_t parseSeed(const std::string& value) {
     std::uint32_t seed{};
     auto [end, error] = std::from_chars(value.data(), value.data() + value.size(), seed);
-    if (error != std::errc{} || end != value.data() + value.size())
+    if (error != std::errc{} || end != value.data() + value.size()) {
         throw std::runtime_error("Seed must be a 32-bit unsigned integer");
+    }
     return seed;
 }
 
@@ -70,8 +71,9 @@ bool parseOptions(int argc, char** argv, Options& options) {
         if (argument == "--smoke-test") {
             options.smokeTest = true;
         } else if (argument == "--seed") {
-            if (++i >= argc)
+            if (++i >= argc) {
                 throw std::runtime_error("Missing value for --seed");
+            }
             options.seed = parseSeed(argv[i]);
             options.explicitSeed = true;
         } else {
@@ -81,7 +83,9 @@ bool parseOptions(int argc, char** argv, Options& options) {
     return true;
 }
 
-Vector3 toRaylib(Vec3 value) { return {value.x, value.y, value.z}; }
+Vector3 toRaylib(Vec3 value) {
+    return {value.x, value.y, value.z};
+}
 
 class Game {
 public:
@@ -92,35 +96,48 @@ public:
     }
 
     int run() {
-        if (!options_.smokeTest)
+        if (!options_.smokeTest) {
             DisableCursor();
+        }
+
         while (!quit_) {
-            if (WindowShouldClose())
+            if (WindowShouldClose()) {
                 break;
+            }
+
             ++frameCount_;
             float dt = std::min(GetFrameTime(), maximumFrameTime);
             actionTimer_ -= dt;
-            if (options_.smokeTest)
+
+            if (options_.smokeTest) {
                 smokeStep();
-            else
+            } else {
                 updateGame(dt);
+            }
+
             world_.streamAround(player_.feet);
             renderer_.rebuild(world_, player_.feet);
             drawFrame();
-            if (options_.smokeTest && frameCount_ >= 60)
+
+            if (options_.smokeTest && frameCount_ >= 60) {
                 quit_ = true;
+            }
         }
+
         EnableCursor();
-        if (options_.smokeTest)
+        if (options_.smokeTest) {
             std::cout << "SMOKE " << (result_ == 0 ? "PASS" : "FAIL") << ": " << frameCount_
                       << " frames, " << renderer_.triangles() << " triangles\n";
+        }
+
         return result_;
     }
 
 private:
     void verify(bool condition, const char* detail) {
-        if (condition)
+        if (condition) {
             return;
+        }
         std::cerr << "SMOKE FAIL: " << detail << '\n';
         result_ = 2;
     }
@@ -139,8 +156,9 @@ private:
     bool placeAt(Cell cell) {
         Block block = palette[std::size_t(player_.selected)];
         if (block == Block::Air || world_.get(cell.x, cell.y, cell.z) != Block::Air ||
-            world_.overlapsPlayer(cell, player_.feet))
+            world_.overlapsPlayer(cell, player_.feet)) {
             return false;
+        }
         return world_.set(cell.x, cell.y, cell.z, block);
     }
 
@@ -187,23 +205,33 @@ private:
             DisableCursor();
             cursorCaptured_ = true;
         }
-        if (IsKeyPressed(KEY_F11))
+
+        if (IsKeyPressed(KEY_F11)) {
             ToggleBorderlessWindowed();
-        if (IsKeyPressed(KEY_F3))
+        }
+        if (IsKeyPressed(KEY_F3)) {
             debugVisible_ = !debugVisible_;
-        if (IsKeyPressed(KEY_H))
+        }
+        if (IsKeyPressed(KEY_H)) {
             helpVisible_ = !helpVisible_;
+        }
 
         Vector2 mouse = GetMouseDelta();
         player_.yaw -= mouse.x * mouseSensitivity;
-        player_.pitch = std::clamp(player_.pitch - mouse.y * mouseSensitivity, -maximumLookPitch,
+        player_.pitch = std::clamp(player_.pitch - mouse.y * mouseSensitivity,
+                                   -maximumLookPitch,
                                    maximumLookPitch);
 
-        if (IsKeyPressed(KEY_SPACE))
+        if (IsKeyPressed(KEY_SPACE)) {
             pressSpace(GetTime());
-        for (int slot = 0; slot < int(palette.size()); ++slot)
-            if (IsKeyPressed(KEY_ONE + slot))
+        }
+
+        for (int slot = 0; slot < int(palette.size()); ++slot) {
+            if (IsKeyPressed(KEY_ONE + slot)) {
                 player_.selected = slot;
+            }
+        }
+
         float wheel = GetMouseWheelMove();
         if (wheel != 0) {
             int offset = wheel > 0 ? -1 : 1;
@@ -211,26 +239,34 @@ private:
                 (player_.selected + offset + int(palette.size())) % int(palette.size());
         }
 
-        Input input{
-            float(IsKeyDown(KEY_W) - IsKeyDown(KEY_S)), float(IsKeyDown(KEY_D) - IsKeyDown(KEY_A)),
-            player_.flying ? float(IsKeyDown(KEY_SPACE) - IsKeyDown(KEY_LEFT_CONTROL)) : 0.0f,
-            jumpRequested_, IsKeyDown(KEY_LEFT_SHIFT)};
+        Input input{float(IsKeyDown(KEY_W) - IsKeyDown(KEY_S)),
+                    float(IsKeyDown(KEY_D) - IsKeyDown(KEY_A)),
+                    player_.flying ? float(IsKeyDown(KEY_SPACE) - IsKeyDown(KEY_LEFT_CONTROL))
+                                   : 0.0f,
+                    jumpRequested_,
+                    IsKeyDown(KEY_LEFT_SHIFT)};
         world_.move(player_, input, dt);
+
         jumpRequested_ = false;
         updateBlocks();
     }
 
     void updateBlocks() {
         auto target = world_.raycast(player_.eye(), player_.direction());
-        if (!target)
+        if (!target) {
             return;
+        }
+
         if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE)) {
             auto picked = std::find(palette.begin(), palette.end(), target->block);
-            if (picked != palette.end())
+            if (picked != palette.end()) {
                 player_.selected = int(std::distance(palette.begin(), picked));
+            }
         }
-        if (actionTimer_ > 0)
+
+        if (actionTimer_ > 0) {
             return;
+        }
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
             world_.set(target->cell.x, target->cell.y, target->cell.z, Block::Air);
             actionTimer_ = blockActionInterval;
@@ -254,6 +290,7 @@ private:
         int width = GetScreenWidth();
         int screenHeight = GetScreenHeight();
         Camera3D activeCamera = camera();
+
         BeginDrawing();
         ClearBackground(Renderer::sky());
         renderer_.draw(activeCamera);
@@ -265,6 +302,7 @@ private:
             DrawCubeWires(centre, 1.006f, 1.006f, 1.006f, ink);
             EndMode3D();
         }
+
         drawHud(width, screenHeight, target);
         EndDrawing();
     }
@@ -295,18 +333,26 @@ private:
         for (int slot = 0; slot < int(palette.size()); ++slot) {
             int x = barX + 6 + slot * slotSize;
             bool selected = slot == player_.selected;
-            DrawRectangle(x, barY + 6, slotSize - 4, 58,
+            DrawRectangle(x,
+                          barY + 6,
+                          slotSize - 4,
+                          58,
                           selected ? Color{73, 94, 65, 255} : Color{39, 54, 49, 230});
-            if (selected)
-                DrawRectangleLinesEx({float(x), float(barY + 6), float(slotSize - 4), 58}, 2,
+            if (selected) {
+                DrawRectangleLinesEx({float(x), float(barY + 6), float(slotSize - 4), 58},
+                                     2,
                                      accent);
+            }
             label(TextFormat("%d", slot + 1), x + 5, barY + 11, 10, selected ? accent : muted);
             renderer_.icon(palette[std::size_t(slot)], float(x + 27), float(barY + 21), 29);
         }
         centeredLabel(blockName(palette[std::size_t(player_.selected)]), centreX, barY - 28, 20);
-        if (palette[std::size_t(player_.selected)] != Block::Air)
-            renderer_.icon(palette[std::size_t(player_.selected)], float(width - 110),
-                           float(screenHeight - 185), 110);
+        if (palette[std::size_t(player_.selected)] != Block::Air) {
+            renderer_.icon(palette[std::size_t(player_.selected)],
+                           float(width - 110),
+                           float(screenHeight - 185),
+                           110);
+        }
 
         if (helpVisible_) {
             DrawRectangle(24, screenHeight - 140, 280, 116, panel);
@@ -317,15 +363,25 @@ private:
         }
         if (debugVisible_) {
             DrawRectangle(24, 100, 345, 112, panel);
-            label(TextFormat("%d FPS / %d triangles", GetFPS(), renderer_.triangles()), 38, 112, 16,
+            label(TextFormat("%d FPS / %d triangles", GetFPS(), renderer_.triangles()),
+                  38,
+                  112,
+                  16,
                   accent);
             label(TextFormat("XYZ %.1f %.1f %.1f", player_.feet.x, player_.feet.y, player_.feet.z),
-                  38, 139, 16);
+                  38,
+                  139,
+                  16);
             ChunkCoord chunk =
                 World::chunkFor(int(std::floor(player_.feet.x)), int(std::floor(player_.feet.z)));
-            label(TextFormat("Seed %u / chunk %d,%d / loaded %zu", world_.seed(), chunk.x, chunk.z,
+            label(TextFormat("Seed %u / chunk %d,%d / loaded %zu",
+                             world_.seed(),
+                             chunk.x,
+                             chunk.z,
                              world_.loadedCount()),
-                  38, 166, 14);
+                  38,
+                  166,
+                  14);
         }
     }
 
@@ -347,12 +403,15 @@ private:
 bool openWindow(bool smokeTest) {
     SetTraceLogLevel(LOG_WARNING);
     unsigned int flags = FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT;
-    if (smokeTest)
+    if (smokeTest) {
         flags |= FLAG_WINDOW_HIDDEN;
+    }
     SetConfigFlags(flags);
     InitWindow(initialWindowWidth, initialWindowHeight, "Codesoc Cubed");
-    if (!IsWindowReady())
+    if (!IsWindowReady()) {
         return false;
+    }
+
     SetWindowMinSize(minimumWindowWidth, minimumWindowHeight);
     SetExitKey(KEY_NULL);
     SetTargetFPS(targetFramesPerSecond);
@@ -364,21 +423,27 @@ bool openWindow(bool smokeTest) {
 int codesoc::runApplication(int argc, char** argv) {
     Options options;
     try {
-        if (!parseOptions(argc, argv, options))
+        if (!parseOptions(argc, argv, options)) {
             return 0;
-        if (!options.explicitSeed)
+        }
+        if (!options.explicitSeed) {
             options.seed = std::random_device{}();
+        }
     } catch (const std::exception& error) {
         std::cerr << error.what() << '\n';
         return 1;
     }
-    if (!openWindow(options.smokeTest))
+
+    if (!openWindow(options.smokeTest)) {
         return 1;
+    }
+
     int result;
     {
         Game game(options);
         result = game.run();
     }
+
     CloseWindow();
     return result;
 }

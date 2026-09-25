@@ -16,9 +16,15 @@ constexpr int unloadRadius = 5;
 constexpr int chunkVolume = chunkSize * chunkSize * height;
 
 enum class Block : std::uint8_t { Air, Grass, Dirt, Stone, Count };
-constexpr std::array<Block, 9> palette{Block::Grass, Block::Dirt, Block::Stone,
-                                       Block::Air,   Block::Air,  Block::Air,
-                                       Block::Air,   Block::Air,  Block::Air};
+constexpr std::array<Block, 9> palette{Block::Grass,
+                                       Block::Dirt,
+                                       Block::Stone,
+                                       Block::Air,
+                                       Block::Air,
+                                       Block::Air,
+                                       Block::Air,
+                                       Block::Air,
+                                       Block::Air};
 
 const char* blockName(Block block);
 bool solid(Block block);
@@ -82,10 +88,22 @@ public:
     Vec3 spawn() const;
     void move(Player& player, Input input, float dt) const;
 
-    std::uint32_t seed() const { return seed_; }
-    std::size_t loadedCount() const { return active_.size(); }
-    std::size_t retainedCount() const { return chunks_.size(); }
-    const std::unordered_set<ChunkCoord, ChunkCoordHash>& activeChunks() const { return active_; }
+    std::uint32_t seed() const {
+        return seed_;
+    }
+
+    std::size_t loadedCount() const {
+        return active_.size();
+    }
+
+    std::size_t retainedCount() const {
+        return chunks_.size();
+    }
+
+    const std::unordered_set<ChunkCoord, ChunkCoordHash>& activeChunks() const {
+        return active_;
+    }
+
     bool isDirty(ChunkCoord coord) const;
     void clearDirty(ChunkCoord coord);
 

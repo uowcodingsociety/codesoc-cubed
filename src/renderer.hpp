@@ -20,7 +20,11 @@ public:
     void rebuild(World& world, Vec3 playerPosition, int maximumChunks = 2);
     void draw(Camera3D camera) const;
     void icon(Block block, float x, float y, float size) const;
-    int triangles() const { return triangles_; }
+
+    int triangles() const {
+        return triangles_;
+    }
+
     static Color sky();
 
 private:
