@@ -65,11 +65,20 @@ Edited chunks remain in memory for the current run and are never written to disk
 
 ## Verification
 
+Install the CMake formatter and linter with `python3 -m pip install -r requirements-dev.txt`.
+The CMake checks include tracked and untracked, non-ignored `CMakeLists.txt` and `.cmake` files.
+Both use the 100-character line limit in `.cmake-format.py`.
+Run `cmake-format --in-place path/to/CMakeLists.txt` to apply formatting to a file.
+
 ```sh
 ctest --test-dir build --output-on-failure
 ./build/codesoc-cubed --seed 42 --smoke-test
 clang-format --dry-run --Werror src/*.cpp src/*.hpp tests/*.cpp
 clang-tidy -p build --warnings-as-errors='*' src/*.cpp tests/*.cpp
+git ls-files -z --cached --others --exclude-standard -- ':(glob)**/CMakeLists.txt' ':(glob)**/*.cmake' |
+  xargs -0 cmake-format --check
+git ls-files -z --cached --others --exclude-standard -- ':(glob)**/CMakeLists.txt' ':(glob)**/*.cmake' |
+  xargs -0 cmake-lint
 ```
 
 The smoke test opens a hidden graphics window, draws the world for a short run and checks startup, movement, flight and editing without writing an image.
