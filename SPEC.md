@@ -1,6 +1,6 @@
 # Codesoc Cubed Starter Specification
 
-This document describes the project as shipped to a Welcome Week participant, before they make the changes in [LAB.md](LAB.md).
+This document describes the project as shipped to a Welcome Week participant.
 It is the shared product and technical contract for users, developers and coding agents.
 The lab deliberately changes some starter values and may add features, so a participant's completed exercise is not required to match every baseline detail below.
 For build instructions and platform setup, see [README.md](README.md).
@@ -106,10 +106,9 @@ The hidden smoke test checks startup, rendering, movement, flight and editing bu
 
 ## Lab Boundary and Document Roles
 
-[LAB.md](LAB.md) defines the participant activity: Stage 0 explores the starter, Stage 1 changes movement and hill constants, Stage 2 adds deterministic stone outcrops and Stage 3 is optional open-ended work.
 Those exercises are intended to alter the starter baseline without changing the requirement that generation remain deterministic across chunk boundaries and reloads.
 There is no required submission.
 
 This specification defines the shipped behaviour and constraints.
-[README.md](README.md) explains how to build and use it, while [LAB.md](LAB.md) instructs participants what to change.
+[README.md](README.md) explains how to build and use it.
 When the shipped starter intentionally changes, update this specification, the relevant tests and the user-facing instructions together.

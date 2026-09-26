@@ -63,7 +63,6 @@ Edited chunks remain in memory for the current run and are never written to disk
 - `src/renderer.*` builds and draws visible chunk faces
 - `src/application.*` handles the window, input, hotbar and frame loop
 - `tests/world_tests.cpp` checks the graphics-independent world behaviour
-- [LAB.md](LAB.md) contains the Welcome Week activity
 
 ## C++ Style
 
