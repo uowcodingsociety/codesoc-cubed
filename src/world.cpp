@@ -62,6 +62,7 @@ float smoothValueNoise(float x, float z, std::uint32_t seed) {
 
 int floorDiv(int value, int divisor) {
     int quotient = value / divisor;
+    // C++ division truncates toward zero, so adjust negative values to the lower chunk.
     if (value < 0 && value % divisor != 0) {
         --quotient;
     }
@@ -260,6 +261,7 @@ bool World::set(int x, int y, int z, Block block) {
 void World::markAffectedChunksDirty(int x, int z) {
     ChunkCoord coord = chunkFor(x, z);
     dirty_.insert(coord);
+    // A changed edge block can expose or hide a face in the neighbouring chunk's mesh.
     int localX = x - coord.x * chunkSize;
     int localZ = z - coord.z * chunkSize;
     if (localX == 0) {
@@ -349,6 +351,7 @@ void World::move(Player& player, Input input, float dt) const {
                       dt / maximumMovementStep)));
     player.grounded = false;
 
+    // Small axis-separated steps keep collision checks from passing through thin block boundaries.
     for (int step = 0; step < steps; ++step) {
         float timeSlice = dt / float(steps);
         moveAlongAxis(player, {velocity.x * timeSlice, 0, 0});
@@ -373,6 +376,7 @@ void World::moveAlongAxis(Player& player, Vec3 displacement) const {
 
     float clearFraction = 0;
     float blockedFraction = 1;
+    // Find the last clear point along this axis without placing the player inside a block.
     for (int i = 0; i < collisionSearchIterations; ++i) {
         float candidateFraction = (clearFraction + blockedFraction) * 0.5f;
         if (collides(displaced(player.feet, displacement, candidateFraction))) {

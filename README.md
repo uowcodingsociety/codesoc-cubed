@@ -73,6 +73,8 @@ Long conditions should keep each top-level `&&` or `||` test visually distinct; 
 Use braces for every `if`, `else`, `for`, `while` and `do` body, including single-statement bodies.
 Write function definitions on multiple lines and leave one blank line between logical blocks of work.
 The logical-block spacing is a review guideline; the other mechanical rules live in `.clang-format` and `.clang-tidy`.
+Use Doxygen-style comments for public behavior and non-obvious project rules, with tags only when they add information beyond the declaration.
+Keep comments accurate when changing the behavior they describe, and review them for usefulness to a newcomer.
 
 ## Verification
 
