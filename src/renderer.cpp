@@ -11,7 +11,7 @@
 namespace codesoc {
 namespace {
 
-constexpr std::array<Cell, 6> normals{
+constexpr std::array<Cell, 6> normals = {
     {{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}}};
 constexpr float corners[6][4][3] = {{{1, 0, 1}, {1, 0, 0}, {1, 1, 0}, {1, 1, 1}},
                                     {{0, 0, 0}, {0, 0, 1}, {0, 1, 1}, {0, 1, 0}},
@@ -19,7 +19,7 @@ constexpr float corners[6][4][3] = {{{1, 0, 1}, {1, 0, 0}, {1, 1, 0}, {1, 1, 1}}
                                     {{0, 0, 0}, {1, 0, 0}, {1, 0, 1}, {0, 0, 1}},
                                     {{0, 0, 1}, {1, 0, 1}, {1, 1, 1}, {0, 1, 1}},
                                     {{1, 0, 0}, {0, 0, 0}, {0, 1, 0}, {1, 1, 0}}};
-constexpr std::array<float, 6> faceLight{0.78f, 0.68f, 1.0f, 0.55f, 0.88f, 0.75f};
+constexpr std::array<float, 6> faceLight = {0.78f, 0.68f, 1.0f, 0.55f, 0.88f, 0.75f};
 
 constexpr const char* vertexShader = R"(
 #version 330
@@ -65,7 +65,7 @@ struct Builder {
     }
 
     Mesh upload() const {
-        Mesh mesh{};
+        Mesh mesh = {};
         mesh.vertexCount = int(vertices.size() / 3);
         mesh.triangleCount = mesh.vertexCount / 3;
         auto copy = [](const auto& data) {
@@ -83,7 +83,7 @@ struct Builder {
 };
 
 void appendFace(Builder& builder, Block block, int x, int y, int z, int face) {
-    constexpr std::array indices{0, 1, 2, 0, 2, 3};
+    constexpr std::array<int, 6> indices = {0, 1, 2, 0, 2, 3};
     Color base = block == Block::Grass && face != 2 ? blockColor(Block::Dirt) : blockColor(block);
     Color color = shade(base, faceLight[std::size_t(face)]);
     for (int index : indices) {
@@ -112,7 +112,7 @@ Mesh buildChunk(const World& world, ChunkCoord coord) {
             }
         }
     }
-    return builder.vertices.empty() ? Mesh{} : builder.upload();
+    return builder.vertices.empty() ? Mesh() : builder.upload();
 }
 
 } // namespace
@@ -217,13 +217,13 @@ void Renderer::icon(Block block, float x, float y, float size) const {
         return;
     }
     Color base = blockColor(block);
-    Vector2 top{x, y};
-    Vector2 left{x - size * 0.5f, y + size * 0.25f};
-    Vector2 mid{x, y + size * 0.5f};
-    Vector2 right{x + size * 0.5f, y + size * 0.25f};
-    Vector2 bottom{x, y + size};
-    Vector2 bl{x - size * 0.5f, y + size * 0.75f};
-    Vector2 br{x + size * 0.5f, y + size * 0.75f};
+    Vector2 top(x, y);
+    Vector2 left(x - size * 0.5f, y + size * 0.25f);
+    Vector2 mid(x, y + size * 0.5f);
+    Vector2 right(x + size * 0.5f, y + size * 0.25f);
+    Vector2 bottom(x, y + size);
+    Vector2 bl(x - size * 0.5f, y + size * 0.75f);
+    Vector2 br(x + size * 0.5f, y + size * 0.75f);
     DrawTriangle(top, left, mid, shade(base, 1.15f));
     DrawTriangle(top, mid, right, shade(base, 1.15f));
     DrawTriangle(left, bl, bottom, shade(base, 0.72f));

@@ -79,7 +79,7 @@ std::size_t ChunkCoordHash::operator()(ChunkCoord coord) const noexcept {
 }
 
 const char* blockName(Block block) {
-    constexpr std::array names{"Empty", "Grass", "Dirt", "Stone"};
+    constexpr std::array<const char*, 4> names = {"Empty", "Grass", "Dirt", "Stone"};
     auto value = std::size_t(block);
     return value < names.size() ? names[value] : "Unknown";
 }
@@ -175,7 +175,7 @@ World::ChunkData& World::ensureChunk(ChunkCoord coord) {
 void World::preloadSpawn() {
     for (int z = -1; z <= 1; ++z) {
         for (int x = -1; x <= 1; ++x) {
-            ChunkCoord coord{x, z};
+            ChunkCoord coord(x, z);
             ensureChunk(coord);
             active_.insert(coord);
         }
@@ -200,7 +200,7 @@ void World::streamAround(Vec3 position, int maximumNewChunks) {
     std::vector<ChunkCoord> missing;
     for (int z = -loadRadius; z <= loadRadius; ++z) {
         for (int x = -loadRadius; x <= loadRadius; ++x) {
-            ChunkCoord coord{centre.x + x, centre.z + z};
+            ChunkCoord coord(centre.x + x, centre.z + z);
             if (!active_.contains(coord)) {
                 missing.push_back(coord);
             }
@@ -327,10 +327,10 @@ void World::move(Player& player, Input input, float dt) const {
 
     float speed = player.flying ? (input.sprint ? fastFlyingSpeed : flyingSpeed)
                                 : (input.sprint ? sprintingSpeed : walkingSpeed);
-    Vec3 velocity{
+    Vec3 velocity(
         (std::sin(player.yaw) * input.forward - std::cos(player.yaw) * input.right) * speed,
         0,
-        (std::cos(player.yaw) * input.forward + std::sin(player.yaw) * input.right) * speed};
+        (std::cos(player.yaw) * input.forward + std::sin(player.yaw) * input.right) * speed);
     if (player.flying) {
         player.verticalVelocity = 0;
         velocity.y = input.vertical * speed;
@@ -404,7 +404,7 @@ std::optional<Hit> World::raycast(Vec3 origin, Vec3 direction, float reach) cons
     direction.y /= length;
     direction.z /= length;
 
-    Cell cell{int(std::floor(origin.x)), int(std::floor(origin.y)), int(std::floor(origin.z))};
+    Cell cell(int(std::floor(origin.x)), int(std::floor(origin.y)), int(std::floor(origin.z)));
     Cell previous = cell;
     auto step = [](float value) { return value > 0 ? 1 : value < 0 ? -1 : 0; };
     int stepX = step(direction.x);
@@ -428,7 +428,7 @@ std::optional<Hit> World::raycast(Vec3 origin, Vec3 direction, float reach) cons
     while (travelled <= reach) {
         Block block = get(cell.x, cell.y, cell.z);
         if (solid(block)) {
-            return Hit{cell, previous, block, travelled};
+            return Hit(cell, previous, block, travelled);
         }
         previous = cell;
         if (nextX <= nextY && nextX <= nextZ) {

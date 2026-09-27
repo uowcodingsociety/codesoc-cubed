@@ -55,9 +55,9 @@ void testGeneration() {
 }
 
 void testStreamingAndEdits() {
-    check(World::chunkFor(-1, -1) == ChunkCoord{-1, -1}, "Negative cells need floor division");
-    check(World::chunkFor(-16, -17) == ChunkCoord{-1, -2}, "Negative seams need exact chunks");
-    check(World::chunkFor(16, 15) == ChunkCoord{1, 0}, "Positive seams need exact chunks");
+    check(World::chunkFor(-1, -1) == ChunkCoord(-1, -1), "Negative cells need floor division");
+    check(World::chunkFor(-16, -17) == ChunkCoord(-1, -2), "Negative seams need exact chunks");
+    check(World::chunkFor(16, 15) == ChunkCoord(1, 0), "Positive seams need exact chunks");
 
     World world(testSeed);
     world.preloadSpawn();
@@ -100,7 +100,7 @@ void testPhysicsAndTargeting() {
 
     check(world.set(17, 50, 0, Block::Stone), "A block can be placed across a chunk seam");
     auto hit = world.raycast({15.5f, 50.5f, 0.5f}, {1, 0, 0});
-    check(hit && hit->cell == Cell{17, 50, 0} && hit->previous == Cell{16, 50, 0},
+    check(hit && hit->cell == Cell(17, 50, 0) && hit->previous == Cell(16, 50, 0),
           "Raycasts must cross chunk seams");
     check(!world.raycast({15.5f, 50.5f, 0.5f}, {1, 0, 0}, 1.0f), "Raycasts must respect reach");
     check(!world.raycast({15.5f, 50.5f, 0.5f}, {0, 0, 0}), "Zero-length raycasts must terminate");

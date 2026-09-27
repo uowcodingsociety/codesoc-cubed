@@ -5,8 +5,8 @@
 #include "../src/renderer.cpp"
 
 int main() {
-    constexpr std::array<int, 6> faceAxis{0, 0, 1, 1, 2, 2};
-    constexpr std::array<float, 6> facePlane{1, 0, 1, 0, 1, 0};
+    constexpr std::array<int, 6> faceAxis = {0, 0, 1, 1, 2, 2};
+    constexpr std::array<float, 6> facePlane = {1, 0, 1, 0, 1, 0};
     for (int face = 0; face < 6; ++face) {
         codesoc::Builder builder;
         codesoc::appendFace(builder, codesoc::Block::Stone, 0, 0, 0, face);
