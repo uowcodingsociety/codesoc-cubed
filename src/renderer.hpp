@@ -29,9 +29,11 @@ public:
 
 private:
     std::unordered_map<ChunkCoord, Mesh, ChunkCoordHash> meshes_;
-    Material material_{};
-    Shader shader_{};
-    int eyeLocation_{}, fogLocation_{}, triangles_{};
+    Material material_ = {};
+    Shader shader_ = {};
+    int eyeLocation_ = 0;
+    int fogLocation_ = 0;
+    int triangles_ = 0;
 };
 
 } // namespace codesoc

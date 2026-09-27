@@ -16,30 +16,35 @@ constexpr int unloadRadius = 5;
 constexpr int chunkVolume = chunkSize * chunkSize * height;
 
 enum class Block : std::uint8_t { Air, Grass, Dirt, Stone, Count };
-constexpr std::array<Block, 9> palette{Block::Grass,
-                                       Block::Dirt,
-                                       Block::Stone,
-                                       Block::Air,
-                                       Block::Air,
-                                       Block::Air,
-                                       Block::Air,
-                                       Block::Air,
-                                       Block::Air};
+constexpr std::array<Block, 9> palette = {Block::Grass,
+                                          Block::Dirt,
+                                          Block::Stone,
+                                          Block::Air,
+                                          Block::Air,
+                                          Block::Air,
+                                          Block::Air,
+                                          Block::Air,
+                                          Block::Air};
 
 const char* blockName(Block block);
 bool solid(Block block);
 
 struct Vec3 {
-    float x{}, y{}, z{};
+    float x = 0;
+    float y = 0;
+    float z = 0;
 };
 
 struct Cell {
-    int x{}, y{}, z{};
+    int x = 0;
+    int y = 0;
+    int z = 0;
     bool operator==(const Cell&) const = default;
 };
 
 struct ChunkCoord {
-    int x{}, z{};
+    int x = 0;
+    int z = 0;
     bool operator==(const ChunkCoord&) const = default;
 };
 
@@ -55,18 +60,24 @@ struct Hit {
 };
 
 struct Player {
-    Vec3 feet{0.5f, 36.0f, 0.5f};
-    float yaw{0.7f}, pitch{-0.15f}, verticalVelocity{};
-    bool flying{}, grounded{};
-    int selected{};
+    Vec3 feet = {0.5f, 36.0f, 0.5f};
+    float yaw = 0.7f;
+    float pitch = -0.15f;
+    float verticalVelocity = 0;
+    bool flying = false;
+    bool grounded = false;
+    int selected = 0;
 
     Vec3 eye() const;
     Vec3 direction() const;
 };
 
 struct Input {
-    float forward{}, right{}, vertical{};
-    bool jump{}, sprint{};
+    float forward = 0;
+    float right = 0;
+    float vertical = 0;
+    bool jump = false;
+    bool sprint = false;
 };
 
 /** Generated chunks unload as the player moves; changed chunks remain in memory for this run. */
@@ -109,8 +120,8 @@ public:
 
 private:
     struct ChunkData {
-        std::array<Block, chunkVolume> blocks{};
-        bool modified{};
+        std::array<Block, chunkVolume> blocks = {};
+        bool modified = false;
     };
 
     static std::size_t index(int localX, int y, int localZ);
@@ -121,7 +132,7 @@ private:
     void markAffectedChunksDirty(int x, int z);
     void moveAlongAxis(Player& player, Vec3 displacement) const;
 
-    std::uint32_t seed_{};
+    std::uint32_t seed_ = 0;
     std::unordered_map<ChunkCoord, ChunkData, ChunkCoordHash> chunks_;
     std::unordered_set<ChunkCoord, ChunkCoordHash> active_;
     std::unordered_set<ChunkCoord, ChunkCoordHash> dirty_;

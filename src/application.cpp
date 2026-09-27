@@ -26,16 +26,16 @@ constexpr float blockActionInterval = 0.17f;
 constexpr float mouseSensitivity = 0.0025f;
 constexpr float maximumLookPitch = 1.55f;
 constexpr double doubleSpaceInterval = 0.25;
-constexpr Color ink{19, 31, 34, 255};
-constexpr Color cream{242, 241, 220, 255};
-constexpr Color muted{160, 182, 175, 255};
-constexpr Color accent{185, 221, 127, 255};
-constexpr Color panel{19, 31, 34, 220};
+constexpr Color ink(19, 31, 34, 255);
+constexpr Color cream(242, 241, 220, 255);
+constexpr Color muted(160, 182, 175, 255);
+constexpr Color accent(185, 221, 127, 255);
+constexpr Color panel(19, 31, 34, 220);
 
 struct Options {
-    std::uint32_t seed{};
-    bool explicitSeed{};
-    bool smokeTest{};
+    std::uint32_t seed = 0;
+    bool explicitSeed = false;
+    bool smokeTest = false;
 };
 
 void label(const char* text, int x, int y, int size, Color color = cream) {
@@ -53,9 +53,9 @@ void printHelp() {
 }
 
 std::uint32_t parseSeed(const std::string& value) {
-    std::uint32_t seed{};
+    std::uint32_t seed = 0;
     auto [end, error] = std::from_chars(value.data(), value.data() + value.size(), seed);
-    if (error != std::errc{} || end != value.data() + value.size()) {
+    if (error != std::errc() || end != value.data() + value.size()) {
         throw std::runtime_error("Seed must be a 32-bit unsigned integer");
     }
     return seed;
@@ -168,7 +168,7 @@ private:
             verify(!world_.collides(player_.feet), "player must start in the world safely");
         } else if (frameCount_ == 12) {
             int surface = world_.surfaceHeight(3, 3);
-            Cell cell{3, surface + 1, 3};
+            Cell cell(3, surface + 1, 3);
             verify(world_.set(cell.x, cell.y, cell.z, Block::Stone),
                    "placement must change terrain");
             verify(world_.set(cell.x, cell.y, cell.z, Block::Air), "mining must remove a block");
@@ -239,12 +239,12 @@ private:
                 (player_.selected + offset + int(palette.size())) % int(palette.size());
         }
 
-        Input input{float(IsKeyDown(KEY_W) - IsKeyDown(KEY_S)),
+        Input input(float(IsKeyDown(KEY_W) - IsKeyDown(KEY_S)),
                     float(IsKeyDown(KEY_D) - IsKeyDown(KEY_A)),
                     player_.flying ? float(IsKeyDown(KEY_SPACE) - IsKeyDown(KEY_LEFT_CONTROL))
                                    : 0.0f,
                     jumpRequested_,
-                    IsKeyDown(KEY_LEFT_SHIFT)};
+                    IsKeyDown(KEY_LEFT_SHIFT));
         world_.move(player_, input, dt);
 
         jumpRequested_ = false;
@@ -277,7 +277,7 @@ private:
     }
 
     Camera3D camera() const {
-        Camera3D result{};
+        Camera3D result = {};
         result.position = toRaylib(player_.eye());
         result.target = Vector3Add(result.position, toRaylib(player_.direction()));
         result.up = {0, 1, 0};
@@ -298,7 +298,7 @@ private:
         auto target = world_.raycast(player_.eye(), player_.direction());
         if (target) {
             BeginMode3D(activeCamera);
-            Vector3 centre{target->cell.x + 0.5f, target->cell.y + 0.5f, target->cell.z + 0.5f};
+            Vector3 centre(target->cell.x + 0.5f, target->cell.y + 0.5f, target->cell.z + 0.5f);
             DrawCubeWires(centre, 1.006f, 1.006f, 1.006f, ink);
             EndMode3D();
         }
@@ -337,7 +337,7 @@ private:
                           barY + 6,
                           slotSize - 4,
                           58,
-                          selected ? Color{73, 94, 65, 255} : Color{39, 54, 49, 230});
+                          selected ? Color(73, 94, 65, 255) : Color(39, 54, 49, 230));
             if (selected) {
                 DrawRectangleLinesEx({float(x), float(barY + 6), float(slotSize - 4), 58},
                                      2,
@@ -390,14 +390,14 @@ private:
     Player player_;
     Renderer renderer_;
     double lastSpacePress_ = -1;
-    float actionTimer_{};
-    int frameCount_{};
-    int result_{};
-    bool jumpRequested_{};
+    float actionTimer_ = 0;
+    int frameCount_ = 0;
+    int result_ = 0;
+    bool jumpRequested_ = false;
     bool cursorCaptured_ = true;
-    bool debugVisible_{};
+    bool debugVisible_ = false;
     bool helpVisible_ = true;
-    bool quit_{};
+    bool quit_ = false;
 };
 
 bool openWindow(bool smokeTest) {
@@ -422,10 +422,12 @@ bool openWindow(bool smokeTest) {
 
 int codesoc::runApplication(int argc, char** argv) {
     Options options;
+    
     try {
         if (!parseOptions(argc, argv, options)) {
             return 0;
         }
+        
         if (!options.explicitSeed) {
             options.seed = std::random_device{}();
         }
@@ -445,5 +447,6 @@ int codesoc::runApplication(int argc, char** argv) {
     }
 
     CloseWindow();
+    
     return result;
 }
