@@ -422,12 +422,12 @@ bool openWindow(bool smokeTest) {
 
 int codesoc::runApplication(int argc, char** argv) {
     Options options;
-    
+
     try {
         if (!parseOptions(argc, argv, options)) {
             return 0;
         }
-        
+
         if (!options.explicitSeed) {
             options.seed = std::random_device{}();
         }
@@ -447,6 +447,6 @@ int codesoc::runApplication(int argc, char** argv) {
     }
 
     CloseWindow();
-    
+
     return result;
 }
