@@ -94,6 +94,7 @@ void appendFace(Builder& builder, Block block, int x, int y, int z, int face) {
 
 Mesh buildChunk(const World& world, ChunkCoord coord) {
     Builder builder;
+    // World::get sees unloaded terrain, hiding faces against solid neighbouring blocks.
     for (int y = 0; y < height; ++y) {
         for (int localZ = 0; localZ < chunkSize; ++localZ) {
             for (int localX = 0; localX < chunkSize; ++localX) {

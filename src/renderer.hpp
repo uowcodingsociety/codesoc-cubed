@@ -9,7 +9,7 @@ namespace codesoc {
 
 Color blockColor(Block block);
 
-/** Builds exposed-face meshes for chunks near the player. */
+/** Builds and draws exposed-face meshes for the world's active chunks. */
 class Renderer {
 public:
     Renderer();
@@ -17,6 +17,9 @@ public:
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
 
+    /** Rebuilds up to maximumChunks missing or dirty meshes, nearest to the player first.
+     *  Clears a chunk's dirty flag after its mesh is rebuilt.
+     */
     void rebuild(World& world, Vec3 playerPosition, int maximumChunks = 2);
     void draw(Camera3D camera) const;
     void icon(Block block, float x, float y, float size) const;

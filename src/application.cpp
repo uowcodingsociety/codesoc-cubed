@@ -143,6 +143,7 @@ private:
     }
 
     void pressSpace(double now) {
+        // The second press toggles flight; a single press requests a jump only while walking.
         if (lastSpacePress_ >= 0 && now - lastSpacePress_ <= doubleSpaceInterval) {
             player_.flying = !player_.flying;
             player_.verticalVelocity = 0;
@@ -154,6 +155,7 @@ private:
     }
 
     bool placeAt(Cell cell) {
+        // Placement has stricter rules than World::set, which also handles mining and test edits.
         Block block = palette[std::size_t(player_.selected)];
         if (block == Block::Air || world_.get(cell.x, cell.y, cell.z) != Block::Air ||
             world_.overlapsPlayer(cell, player_.feet)) {
