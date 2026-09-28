@@ -1,8 +1,7 @@
 # Codesoc Cubed
 
-Codesoc Cubed is a small C++ voxel sandbox for the CodeSoc Welcome Week lab.
-Each run starts in a new world of gentle hills.
-The terrain extends horizontally as the player travels, and changes last only until the program exits.
+A small voxel sandbox for the Coding Society's C++ Introductory Workshop.
+Everytime the program is run, a random world is genereated consistenting of gentle hills.
 
 ## Build and Run
 
