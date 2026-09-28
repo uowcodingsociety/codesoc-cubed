@@ -64,11 +64,7 @@ Edited chunks remain in memory for the current run and are never written to disk
 ## C++ Style
 
 CI uses clang-format 21 and clang-tidy 21.
-Keep lines within 100 columns and run `clang-format-21 -i src/*.cpp src/*.hpp tests/*.cpp` after editing C++ files.
-Write function definitions on multiple lines and leave one blank line between logical blocks of work.
-The logical-block spacing is a review guideline; the other mechanical rules live in `.clang-format` and `.clang-tidy`.
-Use Doxygen-style comments for public behavior and non-obvious project rules, with tags only when they add information beyond the declaration.
-Keep comments accurate when changing the behavior they describe, and review them for usefulness to a newcomer.
+Run `clang-format-21 -i src/*.cpp src/*.hpp tests/*.cpp` after editing C++ files.
 
 ## Verification
 
