@@ -69,10 +69,10 @@ Run `clang-format-21 -i src/*.cpp src/*.hpp tests/*.cpp` after editing C++ files
 ## Verification
 
 ```sh
-ctest --test-dir build --output-on-failure
-./build/codesoc-cubed --seed 42 --smoke-test
+ctest --test-dir build/debug/ --output-on-failure
+./build/debug/codesoc-cubed --seed 42 --smoke-test
 clang-format-21 --dry-run --Werror src/*.cpp src/*.hpp tests/*.cpp
-clang-tidy-21 -p build --warnings-as-errors='*' src/*.cpp tests/*.cpp
+clang-tidy-21 -p build/debug/ --warnings-as-errors='*' src/*.cpp tests/*.cpp
 ```
 
 The smoke test opens a hidden graphics window, draws the world for a short run and checks startup, movement, flight and editing without writing an image.

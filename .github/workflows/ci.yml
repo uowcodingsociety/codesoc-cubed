@@ -33,7 +33,7 @@ jobs:
 
       - name: Configure
         run: |
-          /usr/bin/cmake -S . -B build -G Ninja \
+          /usr/bin/cmake -S . -B build/debug/ -G Ninja \
             -DCMAKE_C_COMPILER=gcc-13 \
             -DCMAKE_CXX_COMPILER=g++-13 \
             -DCMAKE_BUILD_TYPE=Debug \
@@ -43,12 +43,12 @@ jobs:
 
       - name: Build and run tests
         run: |
-          /usr/bin/cmake --build build --parallel 2
-          /usr/bin/ctest --test-dir build --output-on-failure
+          /usr/bin/cmake --build build/debug/
+          /usr/bin/ctest --test-dir build/debug/ --output-on-failure
 
       - name: Check C++ with clang-tidy
         run: |
-          clang-tidy-21 -p build \
+          clang-tidy-21 -p build/debug/ \
             --warnings-as-errors='*' \
             --header-filter="^${GITHUB_WORKSPACE}/(src|tests)/" \
             src/*.cpp tests/*.cpp
