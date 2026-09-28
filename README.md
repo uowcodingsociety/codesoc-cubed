@@ -47,7 +47,6 @@ Run `./build/debug/codesoc-cubed --help` for the supported options.
 
 The first three hotbar slots contain grass, dirt and stone.
 The remaining six slots are empty and cannot place blocks.
-There is no automatic rescue after falling into the void, although double Space can start flight during a fall.
 Raylib saves F12 screenshots in the working directory as `screenshot000.png`, `screenshot001.png` and so on.
 
 ## World and Code
@@ -66,9 +65,6 @@ Edited chunks remain in memory for the current run and are never written to disk
 
 CI uses clang-format 18 and clang-tidy 18.
 Keep lines within 100 columns and run `clang-format-18 -i src/*.cpp src/*.hpp tests/*.cpp` after editing C++ files.
-When a call, initializer or function declaration wraps, put each argument, element or parameter on its own line as closely as clang-format allows.
-Long conditions should keep each top-level `&&` or `||` test visually distinct; clang-format 18 approximates this rather than enforcing every case.
-Use braces for every `if`, `else`, `for`, `while` and `do` body, including single-statement bodies.
 Write function definitions on multiple lines and leave one blank line between logical blocks of work.
 The logical-block spacing is a review guideline; the other mechanical rules live in `.clang-format` and `.clang-tidy`.
 Use Doxygen-style comments for public behavior and non-obvious project rules, with tags only when they add information beyond the declaration.
