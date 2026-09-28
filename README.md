@@ -5,28 +5,27 @@ Everytime the program is run, a random world is genereated consistenting of gent
 
 ## Build and Run
 
-You need a C++20 compiler, CMake 3.25 or newer and OpenGL 3.3 support.
-CMake downloads the official Raylib 6.0 release during configuration with its default F12 screenshot shortcut enabled.
+### Prerequisites
+
+You will need the following:
+- C++20 compiler
+- CMake 3.25 or newer
+- Support for OpenGL 3.3
+
+CMake downloads the official Raylib 6.0 release during configuration.
+
 The prepared Linux lab machines have the required toolchain installed.
 
+### Instructions
+
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-cmake --build build --parallel
-./build/codesoc-cubed
+cmake -S . -B build/debug/ -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build/debug/
+./build/debug/codesoc-cubed
 ```
 
 Use `--seed 42` to generate the same terrain on repeated runs.
-Run `./build/codesoc-cubed --help` for the supported options.
-
-On Debian or Ubuntu, the desktop development packages are available with:
-
-```sh
-sudo apt install build-essential cmake git libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev
-```
-
-On macOS, install the Xcode command line tools and CMake, then use the same build commands.
-On Windows, use a Visual Studio C++ development shell, run `cmake --build build --config Debug` and start `build/Debug/codesoc-cubed.exe`.
-Linux is the first tested platform for the lab.
+Run `./build/debug/codesoc-cubed --help` for the supported options.
 
 ## Controls
 
