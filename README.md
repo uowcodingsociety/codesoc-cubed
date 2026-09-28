@@ -1,33 +1,31 @@
 # Codesoc Cubed
 
-Codesoc Cubed is a small C++ voxel sandbox for the CodeSoc Welcome Week lab.
-Each run starts in a new world of gentle hills.
-The terrain extends horizontally as the player travels, and changes last only until the program exits.
+A small voxel sandbox for the Coding Society's C++ Introductory Workshop.
+Every time the program is run, a random world is generated consisting of gentle hills.
 
 ## Build and Run
 
-You need a C++20 compiler, CMake 3.25 or newer and OpenGL 3.3 support.
-CMake downloads the official Raylib 6.0 release during configuration with its default F12 screenshot shortcut enabled.
+### Prerequisites
+
+You will need the following:
+- C++20 compiler
+- CMake 3.25 or newer
+- Support for OpenGL 3.3
+
+CMake downloads the official Raylib 6.0 release during configuration.
+
 The prepared Linux lab machines have the required toolchain installed.
 
+### Instructions
+
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-cmake --build build --parallel
-./build/codesoc-cubed
+cmake -S . -B build/debug/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build/debug/
+./build/debug/codesoc-cubed
 ```
 
 Use `--seed 42` to generate the same terrain on repeated runs.
-Run `./build/codesoc-cubed --help` for the supported options.
-
-On Debian or Ubuntu, the desktop development packages are available with:
-
-```sh
-sudo apt install build-essential cmake git libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev
-```
-
-On macOS, install the Xcode command line tools and CMake, then use the same build commands.
-On Windows, use a Visual Studio C++ development shell, run `cmake --build build --config Debug` and start `build/Debug/codesoc-cubed.exe`.
-Linux is the first tested platform for the lab.
+Run `./build/debug/codesoc-cubed --help` for the supported options.
 
 ## Controls
 
@@ -49,7 +47,6 @@ Linux is the first tested platform for the lab.
 
 The first three hotbar slots contain grass, dirt and stone.
 The remaining six slots are empty and cannot place blocks.
-There is no automatic rescue after falling into the void, although double Space can start flight during a fall.
 Raylib saves F12 screenshots in the working directory as `screenshot000.png`, `screenshot001.png` and so on.
 
 ## World and Code
@@ -66,23 +63,16 @@ Edited chunks remain in memory for the current run and are never written to disk
 
 ## C++ Style
 
-CI uses clang-format 18 and clang-tidy 18.
-Keep lines within 100 columns and run `clang-format-18 -i src/*.cpp src/*.hpp tests/*.cpp` after editing C++ files.
-When a call, initializer or function declaration wraps, put each argument, element or parameter on its own line as closely as clang-format allows.
-Long conditions should keep each top-level `&&` or `||` test visually distinct; clang-format 18 approximates this rather than enforcing every case.
-Use braces for every `if`, `else`, `for`, `while` and `do` body, including single-statement bodies.
-Write function definitions on multiple lines and leave one blank line between logical blocks of work.
-The logical-block spacing is a review guideline; the other mechanical rules live in `.clang-format` and `.clang-tidy`.
-Use Doxygen-style comments for public behavior and non-obvious project rules, with tags only when they add information beyond the declaration.
-Keep comments accurate when changing the behavior they describe, and review them for usefulness to a newcomer.
+CI uses clang-format 21 and clang-tidy 21.
+Run `clang-format-21 -i src/*.cpp src/*.hpp tests/*.cpp` after editing C++ files.
 
 ## Verification
 
 ```sh
-ctest --test-dir build --output-on-failure
-./build/codesoc-cubed --seed 42 --smoke-test
-clang-format-18 --dry-run --Werror src/*.cpp src/*.hpp tests/*.cpp
-clang-tidy-18 -p build --warnings-as-errors='*' src/*.cpp tests/*.cpp
+ctest --test-dir build/debug/ --output-on-failure
+./build/debug/codesoc-cubed --seed 42 --smoke-test
+clang-format-21 --dry-run --Werror src/*.cpp src/*.hpp tests/*.cpp
+clang-tidy-21 -p build/debug/ --warnings-as-errors='*' src/*.cpp tests/*.cpp
 ```
 
 The smoke test opens a hidden graphics window, draws the world for a short run and checks startup, movement, flight and editing without writing an image.
