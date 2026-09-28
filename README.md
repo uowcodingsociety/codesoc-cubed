@@ -19,7 +19,7 @@ The prepared Linux lab machines have the required toolchain installed.
 ### Instructions
 
 ```sh
-cmake -S . -B build/debug/ -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake -S . -B build/debug/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 cmake --build build/debug/
 ./build/debug/codesoc-cubed
 ```
