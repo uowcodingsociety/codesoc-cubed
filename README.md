@@ -1,7 +1,7 @@
 # Codesoc Cubed
 
 A small voxel sandbox for the Coding Society's C++ Introductory Workshop.
-Everytime the program is run, a random world is genereated consistenting of gentle hills.
+Every time the program is run, a random world is generated consisting of gentle hills.
 
 ## Build and Run
 
