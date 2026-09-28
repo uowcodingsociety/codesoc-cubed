@@ -63,8 +63,8 @@ Edited chunks remain in memory for the current run and are never written to disk
 
 ## C++ Style
 
-CI uses clang-format 18 and clang-tidy 18.
-Keep lines within 100 columns and run `clang-format-18 -i src/*.cpp src/*.hpp tests/*.cpp` after editing C++ files.
+CI uses clang-format 21 and clang-tidy 21.
+Keep lines within 100 columns and run `clang-format-21 -i src/*.cpp src/*.hpp tests/*.cpp` after editing C++ files.
 Write function definitions on multiple lines and leave one blank line between logical blocks of work.
 The logical-block spacing is a review guideline; the other mechanical rules live in `.clang-format` and `.clang-tidy`.
 Use Doxygen-style comments for public behavior and non-obvious project rules, with tags only when they add information beyond the declaration.
@@ -75,8 +75,8 @@ Keep comments accurate when changing the behavior they describe, and review them
 ```sh
 ctest --test-dir build --output-on-failure
 ./build/codesoc-cubed --seed 42 --smoke-test
-clang-format-18 --dry-run --Werror src/*.cpp src/*.hpp tests/*.cpp
-clang-tidy-18 -p build --warnings-as-errors='*' src/*.cpp tests/*.cpp
+clang-format-21 --dry-run --Werror src/*.cpp src/*.hpp tests/*.cpp
+clang-tidy-21 -p build --warnings-as-errors='*' src/*.cpp tests/*.cpp
 ```
 
 The smoke test opens a hidden graphics window, draws the world for a short run and checks startup, movement, flight and editing without writing an image.

@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   verify:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
 
     steps:
       - uses: actions/checkout@v7
@@ -22,14 +22,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             cmake gcc-13 g++-13 ninja-build \
-            clang-format-18 clang-tidy-18 \
+            clang-format-21 clang-tidy-21 \
             libasound2-dev libx11-dev libxrandr-dev libxi-dev \
             libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev
 
       - name: Check C++ formatting
         run: |
           git ls-files -z -- ':(glob)**/*.cpp' ':(glob)**/*.hpp' |
-            xargs -0 -r clang-format-18 --dry-run --Werror
+            xargs -0 -r clang-format-21 --dry-run --Werror
 
       - name: Configure
         run: |
@@ -48,7 +48,7 @@ jobs:
 
       - name: Check C++ with clang-tidy
         run: |
-          clang-tidy-18 -p build \
+          clang-tidy-21 -p build \
             --warnings-as-errors='*' \
             --header-filter="^${GITHUB_WORKSPACE}/(src|tests)/" \
             src/*.cpp tests/*.cpp
