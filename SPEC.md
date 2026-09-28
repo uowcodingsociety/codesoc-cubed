@@ -7,7 +7,7 @@ For build instructions and platform setup, see [README.md](README.md).
 
 ## Purpose and Scope
 
-Codesoc Cubed is a small, single-player C++ voxel sandbox designed for a solo 90-minute CodeSoc Welcome Week lab at the University of Warwick.
+Codesoc Cubed is a small, single-player C++ voxel sandbox designed for a solo 90-minute C++ Introductory Workshop at the University of Warwick.
 A participant should be able to build it, enter a world immediately, explore and make a bounded change to the terrain generator without learning a large game architecture first.
 There is no account, network play, submission system or persistent progression.
 
@@ -20,7 +20,7 @@ Only the current project branding should appear in tracked project text and code
 - A normal launch opens a visible, resizable game window and places the player directly in a generated world, without a title screen or menu
 - The initial window size is 1440 × 900, with a minimum of 960 × 640
 - Each session starts with a new 32-bit world seed, unless `--seed NUMBER` supplies one for reproducibility
-- `--help` prints the supported command-line options, and invalid options fail with an error
+- `--help` prints the supported command-line options and invalid options fail with an error
 - Escape or Q quits immediately, without a confirmation or save step
 - `--smoke-test` is a developer-only, hidden-window check that runs for 60 frames and exits
 
@@ -99,7 +99,7 @@ The HUD provides a crosshair, targeted-block outline, selected-block name, nine-
 The project uses C++20, CMake 3.25 or newer and Raylib 6.0.
 CMake fetches the pinned Raylib release and builds the `codesoc-cubed` executable plus graphics-independent world tests.
 The project does not choose a default Release build type: a single-config generator such as Ninja uses the configuration supplied at CMake configure time.
-Linux is the verified lab platform, while the README gives best-effort macOS and Windows instructions.
+Linux is the verified lab platform.
 
 A change to the starter is ready only when it builds without compiler errors, all tests pass, formatting and lint checks pass, and normal launch produces a visible window.
 The hidden smoke test checks startup, rendering, movement, flight and editing but does not prove desktop visibility.
