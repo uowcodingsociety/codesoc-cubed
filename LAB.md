@@ -83,7 +83,6 @@ cmake --build build/debug/
 ./build/debug/codesoc-cubed
 ```
 
-If the build fails, start with the first error message and check the file and line it mentions.
 Treat `src/renderer.cpp` and `src/renderer.hpp` as a black box.
 You can complete every task without reading or editing them.
 
