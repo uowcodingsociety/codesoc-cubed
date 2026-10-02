@@ -209,8 +209,8 @@ int main() {
         testGeneration();
         testStreamingAndEdits();
         testPhysicsAndTargeting();
-        std::cout
-            << "PASS: random placement, deterministic hills, chunks, edits, seams, collision, targeting and void\n";
+        std::cout << "PASS: random placement, deterministic hills, chunks, edits, seams, "
+                     "collision, targeting and void\n";
         return 0;
     } catch (const std::exception& error) {
         std::cerr << "FAIL: " << error.what() << '\n';

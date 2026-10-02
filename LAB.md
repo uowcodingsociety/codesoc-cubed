@@ -4,17 +4,17 @@ Start by exploring the game, then change its movement, blocks and terrain.
 Work through the tasks in order and get as far as you can.
 For each change, predict what will happen and check the result in the game.
 
-As a warning, many of these technologies may be new to you such as C++, CMake, raylib, git, etc.
-That's fine and is what we were expecting.
-If any code example or task doesn't make sense to you, we highly advise you to first look up the appropriate docummentation.
+C++, CMake, raylib and Git may be new to you, and that's expected.
+If a code example or task is unclear, try looking up the relevant documentation.
 
 Examples:
+
 - [C++](https://cppreference.com/)
-- [CMake](https://cmake.org/cmake/help/v3.25/index.html): Note that we're using an older version of CMake to be compatitible with DCS machines. Any CMake version 3.25+ should work with this project.
+- [CMake](https://cmake.org/cmake/help/v3.25/index.html): We use CMake 3.25 as the minimum version for compatibility with DCS machines. Any CMake version 3.25 or newer should work with this project.
 - [raylib](https://www.raylib.com/)
 
-If docummentation is unclear, please feel free to call one of the lab tutors.
-We hope that this lab sheet should be more than enough and that docummentation is not required, but we acknowledge some parts may not be explained suffiently for your needs or that some are keen to learn more.
+If the documentation is unclear, ask one of the lab tutors for help.
+The lab sheet should give you enough guidance to complete the tasks, but the documentation can help if you need more explanation or want to learn more.
 
 ## Get Started
 
@@ -209,7 +209,16 @@ Choose where this check belongs in `columnBlock()` so it only replaces undergrou
 You do not need to change the helper or understand its hashing implementation.
 
 **Try It:** Place a diamond from the hotbar, then dig a tunnel to find naturally generated diamonds.
-Note the location of an unmined diamond, travel far enough for its chunk to unload and return to check that it is still there.
+To check that ore generation is repeatable, launch the game with a fixed seed:
+
+```sh
+./build/debug/codesoc-cubed --seed 42
+```
+
+Dig a tunnel from spawn and record the route to an unmined diamond, including the number of blocks travelled and mined in each direction.
+Quit, launch again with the same command and follow the same route to check that the diamond appears in the same place.
+Each fresh launch regenerates the terrain and discards your earlier edits.
+Simply travelling away and returning after mining does not test regeneration, because edited chunks remain in memory for the session.
 
 ## 7. Day and Night
 
@@ -264,4 +273,3 @@ Keep scales positive and preserve the final height clamp.
 
 **Try It:** Inspect each landscape from the ground and the air, looking at several hills to compare their slopes.
 Change one value at a time so you can explain what it does.
-

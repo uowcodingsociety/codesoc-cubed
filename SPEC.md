@@ -38,7 +38,7 @@ The area below the bottom layer is void rather than an invisible floor.
 The starter generator produces deterministic, gently rolling hills.
 For a given seed and X/Z coordinate, the natural surface height is 20–32 inclusive and does not depend on chunk loading order.
 Each natural column has grass on top, three dirt blocks immediately below and stone beneath to `y = 0`.
-The starter has no natural stone outcrops: the surface-material helper returns grass until a participant changes it in Stage 2 of the lab.
+The starter has no natural stone outcrops: the surface-material helper returns grass.
 There are no caves, rivers, trees, water or biome systems in the starter.
 
 The four usable block types are air, grass, dirt and stone.
