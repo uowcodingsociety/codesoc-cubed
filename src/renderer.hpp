@@ -14,6 +14,7 @@ class Renderer {
 public:
     Renderer();
     ~Renderer();
+
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
 
@@ -21,7 +22,9 @@ public:
      *  Clears a chunk's dirty flag after its mesh is rebuilt.
      */
     void rebuild(World& world, Vec3 playerPosition, int maximumChunks = 2);
+
     void draw(Camera3D camera) const;
+
     void icon(Block block, float x, float y, float size) const;
 
     int triangles() const {
