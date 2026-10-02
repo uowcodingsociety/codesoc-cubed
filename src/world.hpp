@@ -20,14 +20,14 @@ constexpr int chunkVolume = chunkSize * chunkSize * height;
 enum class Block : std::uint8_t { Air, Grass, Dirt, Stone, Count };
 
 constexpr std::array<Block, 9> palette = {Block::Grass,
-                                       Block::Dirt,
-                                       Block::Stone,
-                                       Block::Air,
-                                       Block::Air,
-                                       Block::Air,
-                                       Block::Air,
-                                       Block::Air,
-                                       Block::Air};
+                                          Block::Dirt,
+                                          Block::Stone,
+                                          Block::Air,
+                                          Block::Air,
+                                          Block::Air,
+                                          Block::Air,
+                                          Block::Air,
+                                          Block::Air};
 
 const char* blockName(Block block);
 bool solid(Block block);

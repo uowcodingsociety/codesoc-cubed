@@ -130,8 +130,8 @@ int World::surfaceHeight(int x, int z) const {
     float broad =
         smoothValueNoise(float(x) / broadTerrainScale, float(z) / broadTerrainScale, seed_);
     float detail = smoothValueNoise(float(x) / detailTerrainScale,
-                                   float(z) / detailTerrainScale,
-                                   seed_ + detailSeedOffset);
+                                    float(z) / detailTerrainScale,
+                                    seed_ + detailSeedOffset);
 
     return std::clamp(baseTerrainHeight + int(std::round(broad * broadTerrainHeight +
                                                          detail * detailTerrainHeight)),
