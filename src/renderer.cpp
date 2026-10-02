@@ -68,12 +68,14 @@ struct Builder {
         Mesh mesh = {};
         mesh.vertexCount = int(vertices.size() / 3);
         mesh.triangleCount = mesh.vertexCount / 3;
+
         auto copy = [](const auto& data) {
             auto bytes = data.size() * sizeof(data[0]);
             void* memory = MemAlloc(unsigned(bytes));
             std::memcpy(memory, data.data(), bytes);
             return memory;
         };
+
         mesh.vertices = static_cast<float*>(copy(vertices));
         mesh.texcoords = static_cast<float*>(copy(uv));
         mesh.colors = static_cast<unsigned char*>(copy(colors));
@@ -86,6 +88,7 @@ void appendFace(Builder& builder, Block block, int x, int y, int z, int face) {
     constexpr std::array<int, 6> indices = {0, 1, 2, 0, 2, 3};
     Color base = block == Block::Grass && face != 2 ? blockColor(Block::Dirt) : blockColor(block);
     Color color = shade(base, faceLight[std::size_t(face)]);
+
     for (int index : indices) {
         const float* corner = corners[face][index];
         builder.vertex({x + corner[0], y + corner[1], z + corner[2]}, color);
@@ -94,6 +97,7 @@ void appendFace(Builder& builder, Block block, int x, int y, int z, int face) {
 
 Mesh buildChunk(const World& world, ChunkCoord coord) {
     Builder builder;
+
     // World::get sees unloaded terrain, hiding faces against solid neighbouring blocks.
     for (int y = 0; y < height; ++y) {
         for (int localZ = 0; localZ < chunkSize; ++localZ) {
@@ -101,11 +105,14 @@ Mesh buildChunk(const World& world, ChunkCoord coord) {
                 int x = coord.x * chunkSize + localX;
                 int z = coord.z * chunkSize + localZ;
                 Block block = world.get(x, y, z);
+
                 if (block == Block::Air) {
                     continue;
                 }
+
                 for (int face = 0; face < int(normals.size()); ++face) {
                     Cell normal = normals[std::size_t(face)];
+
                     if (!solid(world.get(x + normal.x, y + normal.y, z + normal.z))) {
                         appendFace(builder, block, x, y, z, face);
                     }
@@ -113,6 +120,7 @@ Mesh buildChunk(const World& world, ChunkCoord coord) {
             }
         }
     }
+
     return builder.vertices.empty() ? Mesh() : builder.upload();
 }
 
@@ -142,10 +150,12 @@ Renderer::Renderer() {
 Renderer::~Renderer() {
     for (auto& [coord, mesh] : meshes_) {
         static_cast<void>(coord);
+
         if (mesh.vertexCount > 0) {
             UnloadMesh(mesh);
         }
     }
+
     UnloadMaterial(material_);
 }
 
@@ -155,38 +165,46 @@ void Renderer::rebuild(World& world, Vec3 playerPosition, int maximumChunks) {
             ++it;
             continue;
         }
+
         if (it->second.vertexCount > 0) {
             UnloadMesh(it->second);
         }
+
         it = meshes_.erase(it);
     }
 
     std::vector<ChunkCoord> pending;
+
     for (ChunkCoord coord : world.activeChunks()) {
         if (!meshes_.contains(coord) || world.isDirty(coord)) {
             pending.push_back(coord);
         }
     }
+
     std::sort(pending.begin(), pending.end(), [&](ChunkCoord a, ChunkCoord b) {
         auto squaredDistance = [&](ChunkCoord coord) {
             float dx = float(coord.x * chunkSize + chunkSize / 2) - playerPosition.x;
             float dz = float(coord.z * chunkSize + chunkSize / 2) - playerPosition.z;
             return dx * dx + dz * dz;
         };
+
         return squaredDistance(a) < squaredDistance(b);
     });
 
     for (int i = 0; i < std::min(maximumChunks, int(pending.size())); ++i) {
         ChunkCoord coord = pending[std::size_t(i)];
         auto old = meshes_.find(coord);
+
         if (old != meshes_.end() && old->second.vertexCount > 0) {
             UnloadMesh(old->second);
         }
+
         meshes_[coord] = buildChunk(world, coord);
         world.clearDirty(coord);
     }
 
     triangles_ = 0;
+
     for (const auto& [coord, mesh] : meshes_) {
         static_cast<void>(coord);
         triangles_ += mesh.triangleCount;
@@ -204,12 +222,15 @@ void Renderer::draw(Camera3D camera) const {
     SetShaderValue(shader_, fogLocation_, fog, SHADER_UNIFORM_VEC3);
     BeginMode3D(camera);
     Matrix identity = MatrixIdentity();
+
     for (const auto& [coord, mesh] : meshes_) {
         static_cast<void>(coord);
+
         if (mesh.vertexCount > 0) {
             DrawMesh(mesh, material_, identity);
         }
     }
+
     EndMode3D();
 }
 
@@ -217,6 +238,7 @@ void Renderer::icon(Block block, float x, float y, float size) const {
     if (block == Block::Air) {
         return;
     }
+
     Color base = blockColor(block);
     Vector2 top(x, y);
     Vector2 left(x - size * 0.5f, y + size * 0.25f);
@@ -225,6 +247,7 @@ void Renderer::icon(Block block, float x, float y, float size) const {
     Vector2 bottom(x, y + size);
     Vector2 bl(x - size * 0.5f, y + size * 0.75f);
     Vector2 br(x + size * 0.5f, y + size * 0.75f);
+
     DrawTriangle(top, left, mid, shade(base, 1.15f));
     DrawTriangle(top, mid, right, shade(base, 1.15f));
     DrawTriangle(left, bl, bottom, shade(base, 0.72f));
