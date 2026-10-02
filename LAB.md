@@ -41,7 +41,10 @@ cmake --build build/release/
 Explore with WASD and the mouse.
 Press Space to jump, double-tap Space to fly, use Shift to move faster and use Ctrl to descend while flying.
 Mine with the left mouse button and place the selected block with the right mouse button.
-Slots 1–3 contain grass, dirt and stone; select these with the number keys.
+Slots 1–3 contain grass, dirt and stone.
+Select these with the number keys.
+Press F3 to toggle a compact panel in the top-left corner showing a white FPS counter and the world seed.
+The panel starts hidden.
 Escape or Q quits immediately.
 
 ## Section 1
@@ -85,4 +88,3 @@ Build and run again with `--seed 42`, then compare walking speed with the first 
 
 Next, find `broadTerrainHeight` in the same file and lower it from `8.0f` to `5.0f`.
 Build and run again with the same seed to see gentler hills.
-

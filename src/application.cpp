@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <charconv>
-#include <cmath>
 #include <cstdint>
 #include <iostream>
 #include <random>
@@ -235,10 +234,6 @@ private:
             debugVisible_ = !debugVisible_;
         }
 
-        if (IsKeyPressed(KEY_H)) {
-            helpVisible_ = !helpVisible_;
-        }
-
         Vector2 mouse = GetMouseDelta();
 
         player_.yaw -= mouse.x * mouseSensitivity;
@@ -344,11 +339,6 @@ private:
         DrawLine(centreX - 7, centreY, centreX + 7, centreY, cream);
         DrawLine(centreX, centreY - 7, centreX, centreY + 7, cream);
 
-        DrawRectangle(24, 24, 218, 62, panel);
-
-        label("CODESOC CUBED", 40, 34, 20);
-        label(player_.flying ? "CREATIVE / FLYING" : "CREATIVE / WALKING", 40, 61, 10, accent);
-
         if (target) {
             const char* name = blockName(target->block);
             int labelWidth = MeasureText(name, 16) + 28;
@@ -391,39 +381,11 @@ private:
                            110);
         }
 
-        if (helpVisible_) {
-            DrawRectangle(24, screenHeight - 140, 280, 116, panel);
-
-            label("WASD MOVE / SPACE JUMP", 38, screenHeight - 128, 12, accent);
-            label("DOUBLE SPACE FLY / CTRL DOWN", 38, screenHeight - 103, 12);
-            label("SHIFT FAST / MOUSE MINE + PLACE", 38, screenHeight - 78, 12);
-            label("ESC OR Q QUIT / H HIDE HELP", 38, screenHeight - 53, 12, muted);
-        }
         if (debugVisible_) {
-            DrawRectangle(24, 100, 345, 112, panel);
+            DrawRectangle(24, 24, 218, 68, panel);
 
-            label(TextFormat("%d FPS / %d triangles", GetFPS(), renderer_.triangles()),
-                  38,
-                  112,
-                  16,
-                  accent);
-
-            label(TextFormat("XYZ %.1f %.1f %.1f", player_.feet.x, player_.feet.y, player_.feet.z),
-                  38,
-                  139,
-                  16);
-
-            ChunkCoord chunk =
-                World::chunkFor(int(std::floor(player_.feet.x)), int(std::floor(player_.feet.z)));
-
-            label(TextFormat("Seed %u / chunk %d,%d / loaded %zu",
-                             world_.seed(),
-                             chunk.x,
-                             chunk.z,
-                             world_.loadedCount()),
-                  38,
-                  166,
-                  14);
+            label(TextFormat("%d FPS", GetFPS()), 38, 36, 16, WHITE);
+            label(TextFormat("Seed %u", world_.seed()), 38, 63, 14);
         }
     }
 
@@ -438,7 +400,6 @@ private:
     bool jumpRequested_ = false;
     bool cursorCaptured_ = true;
     bool debugVisible_ = false;
-    bool helpVisible_ = true;
     bool quit_ = false;
 };
 

@@ -75,8 +75,7 @@ There is no automatic respawn if the player falls into the void, though flight c
 | Right mouse button | Place the selected block beside the targeted block |
 | Middle mouse button | Select a targeted block type if it is in the palette |
 | 1–9 or mouse wheel | Select a hotbar slot |
-| F3 | Toggle position, seed, chunk, loaded-chunk, FPS and triangle information |
-| H | Toggle the controls card |
+| F3 | Toggle FPS and world seed |
 | F11 | Toggle borderless fullscreen |
 | F12 | Save a screenshot using Raylib's built-in shortcut |
 | Escape or Q | Quit |
@@ -92,7 +91,9 @@ There is no inventory limit or survival system.
 The renderer draws exposed block faces as chunk meshes and rebuilds meshes when relevant chunks change.
 Grass has a green top and dirt-coloured sides, while dirt and stone use distinct flat colours.
 The starter has a fixed sky colour and distance fog, with no day-night cycle or moving sky objects.
-The HUD provides a crosshair, targeted-block outline, selected-block name, nine-slot hotbar, controls card and optional debug information.
+The HUD provides a crosshair, targeted-block outline, selected-block name, nine-slot hotbar and optional debug information.
+F3 toggles a compact panel in the top-left corner containing a pure white FPS counter and the world seed.
+The debug panel starts hidden.
 
 ## Build and Verification Contract
 
@@ -101,7 +102,7 @@ CMake fetches the pinned Raylib release and builds the `codesoc-cubed` executabl
 The project does not choose a default Release build type: a single-config generator such as Ninja uses the configuration supplied at CMake configure time.
 Linux is the verified lab platform.
 
-A change to the starter is ready only when it builds without compiler errors, all tests pass, formatting and lint checks pass, and normal launch produces a visible window.
+A change to the starter is ready only when it builds without compiler errors, all tests pass, formatting and lint checks pass and normal launch produces a visible window.
 The hidden smoke test checks startup, rendering, movement, flight and editing but does not prove desktop visibility.
 
 ## Lab Boundary and Document Roles
