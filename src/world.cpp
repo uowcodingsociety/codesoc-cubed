@@ -11,6 +11,7 @@ namespace codesoc {
 namespace {
 
 constexpr std::uint32_t hashX = 374761393u;
+constexpr std::uint32_t hashY = 2654435761u;
 constexpr std::uint32_t hashZ = 2246822519u;
 constexpr std::uint32_t hashMix = 1274126177u;
 constexpr float broadTerrainScale = 49.0f;
@@ -126,6 +127,11 @@ int World::surfaceHeight(int x, int z) const {
                                                          detail * detailTerrainHeight)),
                       1,
                       height - 2);
+}
+
+int World::randomAt(int x, int y, int z) const {
+    auto hash = coordinateHash(x, z, seed_ ^ (std::uint32_t(y) * hashY));
+    return int(hash % 100u);
 }
 
 Block World::surfaceBlock(int x, int z) const {

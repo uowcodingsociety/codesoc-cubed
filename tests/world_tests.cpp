@@ -20,6 +20,52 @@ void check(bool condition, const char* message) {
     }
 }
 
+void testRandomAt() {
+    World world(testSeed);
+    World matching(testSeed);
+    World different(testSeed + 1);
+    bool seedDiffers = false;
+    bool depthDiffers = false;
+
+    for (int x = -32; x <= 32; x += 7) {
+        for (int z = -32; z <= 32; z += 7) {
+            for (int y = -3; y < height; y += 5) {
+                int value = world.randomAt(x, y, z);
+                check(value >= 0 && value < 100, "Random placement values must be from 0 to 99");
+                check(value == world.randomAt(x, y, z), "Repeated placement checks must agree");
+                check(value == matching.randomAt(x, y, z), "Matching worlds must agree");
+                seedDiffers |= value != different.randomAt(x, y, z);
+                depthDiffers |= value != world.randomAt(x, y + 1, z);
+            }
+        }
+    }
+
+    check(seedDiffers, "The world seed must affect random placement values");
+    check(depthDiffers, "Depth must affect random placement values");
+
+    std::array<int, height> before;
+    for (int y = 0; y < height; ++y) {
+        before[std::size_t(y)] = world.randomAt(0, y, 0);
+    }
+
+    auto verifyValues = [&] {
+        for (int y = 0; y < height; ++y) {
+            check(world.randomAt(0, y, 0) == before[std::size_t(y)],
+                  "Chunk loading must not change random placement values");
+        }
+    };
+
+    world.streamAround(world.spawn(), 81);
+    check(world.activeChunks().contains({0, 0}), "The sampled chunk must be loaded");
+    verifyValues();
+    world.streamAround({320.5f, 40.0f, 320.5f}, 81);
+    check(!world.activeChunks().contains({0, 0}), "The sampled chunk must unload");
+    verifyValues();
+    world.streamAround(world.spawn(), 81);
+    check(world.activeChunks().contains({0, 0}), "The sampled chunk must reload");
+    verifyValues();
+}
+
 void testGeneration() {
     World first(testSeed);
     World second(testSeed);
@@ -159,11 +205,12 @@ void testPhysicsAndTargeting() {
 
 int main() {
     try {
+        testRandomAt();
         testGeneration();
         testStreamingAndEdits();
         testPhysicsAndTargeting();
         std::cout
-            << "PASS: deterministic hills, chunks, edits, seams, collision, targeting and void\n";
+            << "PASS: random placement, deterministic hills, chunks, edits, seams, collision, targeting and void\n";
         return 0;
     } catch (const std::exception& error) {
         std::cerr << "FAIL: " << error.what() << '\n';

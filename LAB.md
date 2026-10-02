@@ -196,8 +196,11 @@ For ore, give some underground stone positions a small chance of becoming diamon
 Keep the surface, dirt and bedrock rules intact.
 
 Ore placement should remain consistent when chunks unload and reload within the same world.
-Look at `coordinateHash()` in `src/world.cpp` for a starting point and include depth (`y`) as well as `x`, `z` and the seed in your ore decision.
-Avoid a fresh random roll every time a block or chunk is generated.
+Use the provided `World::randomAt()` helper in `src/world.cpp`.
+It returns an integer from 0 to 99 for a block position, with the same result whenever that position is checked in the same world.
+For example, `randomAt(x, y, z) < 2` gives roughly a 2% chance of placing a diamond.
+Choose where this check belongs in `columnBlock()` so it only replaces underground stone.
+You do not need to change the helper or understand its hashing implementation.
 
 **Try It:** Place a diamond from the hotbar, then dig a tunnel to find naturally generated diamonds.
 Note the location of an unmined diamond, travel far enough for its chunk to unload and return to check that it is still there.
