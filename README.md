@@ -8,6 +8,7 @@ Every time the program is run, a random world is generated consisting of gentle 
 ### Prerequisites
 
 You will need the following:
+
 - C++20 compiler
 - CMake 3.25 or newer
 - Support for OpenGL 3.3
@@ -39,14 +40,15 @@ Run `./build/debug/codesoc-cubed --help` for the supported options.
 | Left and right mouse buttons | Mine and place blocks |
 | Middle mouse button | Select the targeted block |
 | 1–9 and mouse wheel | Select a hotbar slot |
-| F3 | Toggle position, seed, chunk and frame information |
-| H | Toggle the controls card |
+| F3 | Toggle FPS and world seed |
 | F11 | Toggle borderless fullscreen |
 | F12 | Save a screenshot |
 | Escape or Q | Quit immediately |
 
 The first three hotbar slots contain grass, dirt and stone.
 The remaining six slots are empty and cannot place blocks.
+F3 shows a compact panel in the top-left corner with a white FPS counter and the world seed.
+The panel starts hidden.
 Raylib saves F12 screenshots in the working directory as `screenshot000.png`, `screenshot001.png` and so on.
 
 ## World and Code
