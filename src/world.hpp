@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "blocks.hpp"
+
 namespace codesoc {
 
 constexpr int height = 64;
@@ -17,20 +19,15 @@ constexpr int loadRadius = 4;
 constexpr int unloadRadius = 5;
 constexpr int chunkVolume = chunkSize * chunkSize * height;
 
-enum class Block : std::uint8_t { Air, Grass, Dirt, Stone, Count };
-
-constexpr std::array<Block, 9> palette = {Block::Grass,
-                                          Block::Dirt,
-                                          Block::Stone,
+constexpr std::array<Block, 9> palette = {blockId("Grass"),
+                                          blockId("Dirt"),
+                                          blockId("Stone"),
                                           Block::Air,
                                           Block::Air,
                                           Block::Air,
                                           Block::Air,
                                           Block::Air,
                                           Block::Air};
-
-const char* blockName(Block block);
-bool solid(Block block);
 
 struct Vec3 {
     float x = 0;

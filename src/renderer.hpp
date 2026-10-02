@@ -7,7 +7,7 @@
 
 namespace codesoc {
 
-Color blockColor(Block block);
+Color blockColor(Block block, BlockFace face = BlockFace::Top);
 
 /** Builds and draws exposed-face meshes for the world's active chunks. */
 class Renderer {

@@ -33,13 +33,13 @@ void testGeneration() {
             int surface = first.surfaceHeight(x, z);
             check(surface >= 20 && surface <= 32, "Gentle hills must stay within the chosen range");
             Block top = first.get(x, surface, z);
-            check(top == Block::Grass || top == Block::Stone,
+            check(top == blockId("Grass") || top == blockId("Stone"),
                   "Surface must use a supported natural material");
-            check(first.get(x, surface - 1, z) == Block::Dirt, "Dirt must sit beneath grass");
-            check(first.get(x, surface - 3, z) == Block::Dirt,
+            check(first.get(x, surface - 1, z) == blockId("Dirt"), "Dirt must sit beneath grass");
+            check(first.get(x, surface - 3, z) == blockId("Dirt"),
                   "Dirt layer must be three blocks deep");
-            check(first.get(x, surface - 4, z) == Block::Stone, "Stone must form the core");
-            check(first.get(x, 0, z) == Block::Stone, "Base terrain must be stone");
+            check(first.get(x, surface - 4, z) == blockId("Stone"), "Stone must form the core");
+            check(first.get(x, 0, z) == blockId("Stone"), "Base terrain must be stone");
             check(first.get(x, surface + 1, z) == Block::Air, "Sky must be empty");
             check(first.get(x, surface, z) == second.get(x, surface, z),
                   "Chunk loading order must not change generation");
@@ -71,21 +71,24 @@ void testStreamingAndEdits() {
     world.streamAround(world.spawn(), 81);
     check(world.loadedCount() == 81, "Four-chunk loading radius must fill a 9x9 area");
     check(world.set(0, 0, 0, Block::Air), "Bottom stone must be mineable");
-    check(!world.set(0, -1, 0, Block::Stone), "Blocks cannot be placed below the terrain range");
-    check(!world.set(0, height, 0, Block::Stone), "Blocks cannot be placed above the range");
-    check(!world.set(0, 0, 0, Block::Count), "Invalid materials must be rejected");
+    check(!world.set(0, -1, 0, blockId("Stone")),
+          "Blocks cannot be placed below the terrain range");
+    check(!world.set(0, height, 0, blockId("Stone")), "Blocks cannot be placed above the range");
+    check(!world.set(0, 0, 0, Block::Invalid), "Invalid materials must be rejected");
+    check(!world.set(0, 0, 0, static_cast<Block>(blockDefinitions.size() + 1)),
+          "IDs without a definition must be rejected");
 
     world.streamAround({320.5f, 40.0f, 320.5f}, 81);
     check(world.loadedCount() == 81, "Distant travel must unload old active chunks");
     check(world.retainedCount() == 82, "Only the edited old chunk should remain in memory");
     check(world.get(0, 0, 0) == Block::Air, "An edit must survive unloading");
-    check(world.get(16, 0, 0) == Block::Stone, "Unedited unloaded chunks must regenerate");
+    check(world.get(16, 0, 0) == blockId("Stone"), "Unedited unloaded chunks must regenerate");
     world.streamAround(world.spawn(), 81);
     check(world.get(0, 0, 0) == Block::Air, "An edit must survive returning to the chunk");
 
     world.clearDirty({-1, 0});
     world.clearDirty({0, 0});
-    check(world.set(-1, 50, 0, Block::Stone), "Negative seam edit must succeed");
+    check(world.set(-1, 50, 0, blockId("Stone")), "Negative seam edit must succeed");
     check(world.isDirty({-1, 0}) && world.isDirty({0, 0}),
           "Editing at a seam must invalidate both meshes");
 }
@@ -104,7 +107,7 @@ void testPhysicsAndTargeting() {
     world.move(player, {0, 0, 0, true, false}, step);
     check(player.feet.y > ground, "Space jump must lift the player");
 
-    check(world.set(17, 50, 0, Block::Stone), "A block can be placed across a chunk seam");
+    check(world.set(17, 50, 0, blockId("Stone")), "A block can be placed across a chunk seam");
     auto hit = world.raycast({15.5f, 50.5f, 0.5f}, {1, 0, 0});
     check(hit && hit->cell == Cell(17, 50, 0) && hit->previous == Cell(16, 50, 0),
           "Raycasts must cross chunk seams");
@@ -113,7 +116,7 @@ void testPhysicsAndTargeting() {
     check(world.overlapsPlayer({0, int(ground) + 1, 0}, player.feet),
           "Placement must detect player overlap");
 
-    check(world.set(16, 50, 0, Block::Stone), "A seam wall can be built");
+    check(world.set(16, 50, 0, blockId("Stone")), "A seam wall can be built");
     Player wallTraveller;
     wallTraveller.feet = {15.5f, 50.0f, 0.5f};
     wallTraveller.yaw = 1.5707963f;
