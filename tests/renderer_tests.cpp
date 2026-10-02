@@ -10,7 +10,7 @@ int main() {
 
     for (int face = 0; face < 6; ++face) {
         codesoc::Builder builder;
-        codesoc::appendFace(builder, codesoc::Block::Stone, 0, 0, 0, face);
+        codesoc::appendFace(builder, codesoc::blockId("Stone"), 0, 0, 0, face);
 
         for (int vertex = 0; vertex < 6; ++vertex) {
             float coordinate = builder.vertices[std::size_t(vertex * 3 + faceAxis[face])];
@@ -34,6 +34,23 @@ int main() {
         if (cross * sign <= 0) {
             std::cerr << "Face " << face << " has reversed or degenerate winding\n";
             return 1;
+        }
+    }
+
+    // Check the mesh colours as well as geometry, including Grass's top override.
+    for (int face = 0; face < 6; ++face) {
+        codesoc::Builder builder;
+        codesoc::appendFace(builder, codesoc::blockId("Grass"), 0, 0, 0, face);
+        Color base = face == 2 ? Color{104, 163, 74, 255} : Color{133, 96, 66, 255};
+        Color expected = codesoc::shade(base, codesoc::faceLight[std::size_t(face)]);
+        for (int vertex = 0; vertex < 6; ++vertex) {
+            std::size_t offset = std::size_t(vertex * 4);
+            if (builder.colors[offset] != expected.r || builder.colors[offset + 1] != expected.g ||
+                builder.colors[offset + 2] != expected.b ||
+                builder.colors[offset + 3] != expected.a) {
+                std::cerr << "Grass face " << face << " has incorrect vertex colours\n";
+                return 1;
+            }
         }
     }
 }

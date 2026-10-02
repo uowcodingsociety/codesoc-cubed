@@ -86,7 +86,10 @@ struct Builder {
 
 void appendFace(Builder& builder, Block block, int x, int y, int z, int face) {
     constexpr std::array<int, 6> indices = {0, 1, 2, 0, 2, 3};
-    Color base = block == Block::Grass && face != 2 ? blockColor(Block::Dirt) : blockColor(block);
+    BlockFace blockFace = face == 2   ? BlockFace::Top
+                          : face == 3 ? BlockFace::Bottom
+                                      : BlockFace::Side;
+    Color base = blockColor(block, blockFace);
     Color color = shade(base, faceLight[std::size_t(face)]);
 
     for (int index : indices) {
@@ -126,17 +129,12 @@ Mesh buildChunk(const World& world, ChunkCoord coord) {
 
 } // namespace
 
-Color blockColor(Block block) {
-    switch (block) {
-    case Block::Grass:
-        return {104, 163, 74, 255};
-    case Block::Dirt:
-        return {133, 96, 66, 255};
-    case Block::Stone:
-        return {137, 145, 151, 255};
-    default:
+Color blockColor(Block block, BlockFace face) {
+    if (!solid(block)) {
         return BLANK;
     }
+    Rgb color = blockRgb(block, face);
+    return {color.r, color.g, color.b, 255};
 }
 
 Renderer::Renderer() {

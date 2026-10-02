@@ -84,17 +84,6 @@ std::size_t ChunkCoordHash::operator()(ChunkCoord coord) const noexcept {
     return std::size_t(coordinateHash(coord.x, coord.z, 0x51ed270bu));
 }
 
-const char* blockName(Block block) {
-    constexpr std::array<const char*, 4> names = {"Empty", "Grass", "Dirt", "Stone"};
-    auto value = std::size_t(block);
-
-    return value < names.size() ? names[value] : "Unknown";
-}
-
-bool solid(Block block) {
-    return block != Block::Air;
-}
-
 Vec3 Player::eye() const {
     return {feet.x, feet.y + playerEyeHeight, feet.z};
 }
@@ -142,7 +131,7 @@ int World::surfaceHeight(int x, int z) const {
 Block World::surfaceBlock(int x, int z) const {
     static_cast<void>(x);
     static_cast<void>(z);
-    return Block::Grass;
+    return blockId("Grass");
 }
 
 Block World::columnBlock(int x, int y, int z, int surface) const {
@@ -154,7 +143,7 @@ Block World::columnBlock(int x, int y, int z, int surface) const {
         return surfaceBlock(x, z);
     }
 
-    return y >= surface - dirtDepth ? Block::Dirt : Block::Stone;
+    return y >= surface - dirtDepth ? blockId("Dirt") : blockId("Stone");
 }
 
 Block World::generatedBlock(int x, int y, int z) const {
@@ -271,7 +260,7 @@ Block World::get(int x, int y, int z) const {
 }
 
 bool World::set(int x, int y, int z, Block block) {
-    if (!contains(y) || block >= Block::Count || get(x, y, z) == block) {
+    if (!contains(y) || !validBlock(block) || get(x, y, z) == block) {
         return false;
     }
 

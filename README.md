@@ -8,6 +8,7 @@ Every time the program is run, a random world is generated consisting of gentle 
 ### Prerequisites
 
 You will need the following:
+
 - C++20 compiler
 - CMake 3.25 or newer
 - Support for OpenGL 3.3
@@ -56,9 +57,11 @@ Chunks are 16 × 16 blocks horizontally and 64 blocks tall.
 Nearby chunks load a few at a time, while distant untouched chunks unload.
 Edited chunks remain in memory for the current run and are never written to disk.
 
+- `src/blocks.hpp` defines block names, RGB colours and optional face overrides
 - `src/world.*` contains terrain generation, chunk streaming, movement, collision and targeting
 - `src/renderer.*` builds and draws visible chunk faces
 - `src/application.*` handles the window, input, hotbar and frame loop
+- `tests/block_tests.cpp` checks block definitions and face colours
 - `tests/world_tests.cpp` checks the graphics-independent world behaviour
 
 ## C++ Style

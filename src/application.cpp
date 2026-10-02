@@ -183,7 +183,7 @@ private:
 
             Cell cell(3, surface + 1, 3);
 
-            verify(world_.set(cell.x, cell.y, cell.z, Block::Stone),
+            verify(world_.set(cell.x, cell.y, cell.z, blockId("Stone")),
                    "placement must change terrain");
             verify(world_.set(cell.x, cell.y, cell.z, Block::Air), "mining must remove a block");
             player_.selected = 3;
