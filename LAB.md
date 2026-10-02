@@ -20,6 +20,12 @@ We hope that this lab sheet should be more than enough and that docummentation i
 
 Open a terminal and run these commands.
 
+> Note: If you are using a DCS machine, you will need to load the correct compiler first:
+
+```sh
+module load GCC/13.3.0
+```
+
 1. Clone the starter code:
 
 ```sh
