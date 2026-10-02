@@ -1,4 +1,4 @@
-# Build Your Own Block World
+# Lab
 
 Start by exploring the game, then change its movement, blocks and terrain.
 Work through the tasks in order and get as far as you can.
