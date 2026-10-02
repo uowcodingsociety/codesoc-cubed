@@ -4,3 +4,4 @@
 /screenshots/
 screenshot*.png
 *.tmp
+compile_commands.json
