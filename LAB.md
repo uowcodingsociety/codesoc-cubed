@@ -259,22 +259,3 @@ Keep scales positive and preserve the final height clamp.
 **Try It:** Inspect each landscape from the ground and the air, looking at several hills to compare their slopes.
 Change one value at a time so you can explain what it does.
 
-## 10. Wave Worlds
-
-Replace the noise-based surface calculation with each of these functions in turn: **sine wave**, **saw wave** and **square wave**.
-Try all three as separate worlds.
-
-**Code Pointer:** Change the height calculation in `World::surfaceHeight()` in `src/world.cpp`.
-
-**Hint:**
-
-Use `x` as the position along your wave and leave `z` out at first.
-Choose a base height, an amplitude (how tall the wave is) and a wavelength (how many blocks before it repeats).
-Keep your final integer height clamped between `1` and `height - 2`.
-
-- **Sine wave:** `std::sin()` produces smooth repeating rises and falls
-- **Saw wave:** Use the fractional part of `float(x) / wavelength` to make a ramp that rises and suddenly drops, using `std::floor()` so it also repeats correctly at negative coordinates
-- **Square wave:** Split each repeating period into a high half and a low half to make alternating raised and lowered platforms
-
-**Try It:** Fly along the wave direction to spot the pattern, then explore on foot.
-Check both positive and negative coordinates and make sure the pattern continues across chunk boundaries.
