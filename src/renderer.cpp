@@ -209,13 +209,8 @@ void Renderer::rebuild(World& world, Vec3 playerPosition, int maximumChunks) {
     }
 }
 
-Color Renderer::sky() {
-    return {153, 196, 219, 255};
-}
-
-void Renderer::draw(Camera3D camera) const {
-    Color color = sky();
-    float fog[3]{color.r / 255.0f, color.g / 255.0f, color.b / 255.0f};
+void Renderer::draw(Camera3D camera, Color skyColor) const {
+    float fog[3]{skyColor.r / 255.0f, skyColor.g / 255.0f, skyColor.b / 255.0f};
     SetShaderValue(shader_, eyeLocation_, &camera.position, SHADER_UNIFORM_VEC3);
     SetShaderValue(shader_, fogLocation_, fog, SHADER_UNIFORM_VEC3);
     BeginMode3D(camera);

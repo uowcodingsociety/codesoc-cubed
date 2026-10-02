@@ -84,6 +84,9 @@ cmake --build build/debug/
 ```
 
 If the build fails, start with the first error message and check the file and line it mentions.
+Treat `src/renderer.cpp` and `src/renderer.hpp` as a black box.
+You can complete every task without reading or editing them.
+
 Keep your earlier features as you go.
 For the final terrain tasks, replace the terrain formula while keeping your respawn key, bedrock, diamonds and day/night cycle.
 
@@ -121,7 +124,7 @@ Compare how high you jump and how long you stay in the air as you change each va
 
 Change the colours of the blocks and sky to give the world a different appearance.
 
-**Code Pointers:** Find `blockDefinitions` in `src/blocks.hpp` and `Renderer::sky()` in `src/renderer.cpp`.
+**Code Pointers:** Find `blockDefinitions` in `src/blocks.hpp` and `Game::skyColor()` in `src/application.cpp`.
 
 **Hint:**
 
@@ -192,17 +195,18 @@ Note the location of an unmined diamond, travel far enough for its chunk to unlo
 
 Add a repeating day/night cycle that gradually changes the sky from daytime to night and back again.
 
-**Code Pointers:** Start with `Renderer::sky()` and `Renderer::draw()` in `src/renderer.cpp`, then find `ClearBackground(Renderer::sky())` in `src/application.cpp`.
+**Code Pointer:** Find `Game::skyColor()` in `src/application.cpp`.
 
 **Hint:**
 
+Change `skyColor()` to return a colour that varies over time.
 Raylib's `GetTime()` gives elapsed time in seconds.
 Turn that time into a repeating cycle, then blend between your daytime sky colour and a dark night colour.
 Start with a short cycle so you can watch a full day quickly.
 A sine wave can help make the transition smooth.
 
-The background and distance fog both use `Renderer::sky()`.
-Keep them on the same cycle so distant terrain matches the sky.
+The application uses the colour returned by `skyColor()` for the background and passes it to the renderer.
+The renderer automatically uses that colour for distance fog, so no renderer changes are needed.
 
 **Try It:** Stand somewhere with a clear view and watch a complete day, night and sunrise.
 Check for smooth transitions and matching fog at the horizon.

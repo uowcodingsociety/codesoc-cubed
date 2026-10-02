@@ -23,15 +23,14 @@ public:
      */
     void rebuild(World& world, Vec3 playerPosition, int maximumChunks = 2);
 
-    void draw(Camera3D camera) const;
+    /** Draws terrain with distance fog matching the supplied sky colour. */
+    void draw(Camera3D camera, Color skyColor) const;
 
     void icon(Block block, float x, float y, float size) const;
 
     int triangles() const {
         return triangles_;
     }
-
-    static Color sky();
 
 private:
     std::unordered_map<ChunkCoord, Mesh, ChunkCoordHash> meshes_;
