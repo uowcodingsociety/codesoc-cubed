@@ -308,14 +308,19 @@ private:
         return result;
     }
 
+    Color skyColor() const {
+        return {153, 196, 219, 255};
+    }
+
     void drawFrame() {
         int width = GetScreenWidth();
         int screenHeight = GetScreenHeight();
         Camera3D activeCamera = camera();
+        Color sky = skyColor();
 
         BeginDrawing();
-        ClearBackground(Renderer::sky());
-        renderer_.draw(activeCamera);
+        ClearBackground(sky);
+        renderer_.draw(activeCamera, sky);
 
         auto target = world_.raycast(player_.eye(), player_.direction());
 

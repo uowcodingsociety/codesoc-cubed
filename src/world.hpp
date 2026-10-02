@@ -124,6 +124,12 @@ public:
     /** Returns the seed-based natural surface height, regardless of edits or chunk loading. */
     int surfaceHeight(int x, int z) const;
 
+    /** Returns a repeatable value from 0 to 99 for a block position.
+     *  Uses the world seed internally and is independent of chunk loading.
+     *  For example, randomAt(x, y, z) < 2 gives roughly a 2% placement chance.
+     */
+    int randomAt(int x, int y, int z) const;
+
     /** Tests the player's collision box at a feet position. There is no floor below the world. */
     bool collides(Vec3 feet) const;
     bool overlapsPlayer(Cell cell, Vec3 feet) const;
